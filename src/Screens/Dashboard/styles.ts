@@ -77,5 +77,8 @@ export const HighLightCards = styled.ScrollView.attrs({
     showsHorizontalScrollIndicator: false,
     contentContainerStyle: { paddingHorizontal: 24}
 }) `
-    
+    width: 100%;
+
+    position: absolute;
+    margin-top: ${RFPercentage(20)}px;
 `;
