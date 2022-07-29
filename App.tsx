@@ -11,6 +11,7 @@ import {
 import theme from "./src/global/styles/theme";
 import { Dashboard } from "./src/Screens/Dashboard";
 import { Register } from "./src/Screens/Register";
+import { CategorySelect } from "./src/Screens/CategorySelect";
 
 export default function App() {
   const [fontsLoaded] = useFonts({
