@@ -3,12 +3,13 @@ import styled from "styled-components/native";
 
 import { Feather } from "@expo/vector-icons";
 import theme from "../../global/styles/theme";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 interface CategoryProps {
   isActive: boolean;
 }
 
-export const Container = styled.View`
+export const Container = styled(GestureHandlerRootView)`
   flex: 1;
   background-color: ${({ theme }) => theme.colors.background};
   align-items: center;
