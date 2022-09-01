@@ -1,5 +1,6 @@
 import "react-native-gesture-handler";
 import React from "react";
+import { StatusBar } from "react-native";
 import { ThemeProvider } from "styled-components";
 import AppLoading from "expo-app-loading";
 import {
@@ -17,9 +18,8 @@ import theme from "./src/global/styles/theme";
 import { NavigationContainer } from "@react-navigation/native";
 import { AppRoutes } from "./src/routes/app.routes";
 
-import { Dashboard } from "./src/Screens/Dashboard";
-import { Register } from "./src/Screens/Register";
-import { CategorySelect } from "./src/Screens/CategorySelect";
+import { SignIn } from "./src/Screens/SignIn";
+
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 export default function App() {
@@ -37,7 +37,12 @@ export default function App() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <ThemeProvider theme={theme}>
         <NavigationContainer>
-          <AppRoutes />
+          <StatusBar
+            barStyle="light-content"
+            translucent
+            backgroundColor="transparent"
+          />
+          <SignIn />
         </NavigationContainer>
       </ThemeProvider>
     </GestureHandlerRootView>
