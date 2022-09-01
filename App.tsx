@@ -19,6 +19,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { AppRoutes } from "./src/routes/app.routes";
 
 import { SignIn } from "./src/Screens/SignIn";
+import { AuthProvider } from "./src/hooks/auth";
 
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
@@ -42,7 +43,9 @@ export default function App() {
             translucent
             backgroundColor="transparent"
           />
-          <SignIn />
+          <AuthProvider>
+            <SignIn />
+          </AuthProvider>
         </NavigationContainer>
       </ThemeProvider>
     </GestureHandlerRootView>
