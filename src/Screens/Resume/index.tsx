@@ -25,6 +25,7 @@ import {
   LoadContainer,
 } from "./styles";
 import { categories } from "../../utils/categories";
+import { useAuth } from "../../hooks/auth";
 
 interface TransactionData {
   type: "positive" | "negative";
@@ -50,6 +51,7 @@ export function Resume() {
     []
   );
 
+  const { user } = useAuth();
   const theme = useTheme();
 
   function handleDateChange(action: "next" | "prev") {
@@ -62,7 +64,7 @@ export function Resume() {
 
   async function LoadData() {
     setIsLoanding(true);
-    const dataKey = "@gofinances:transactions";
+    const dataKey = `@gofinances:transactions_user${user.id}`;
     const response = await AsyncStorage.getItem(dataKey);
     const responseFormatted = response ? JSON.parse(response) : [];
 
