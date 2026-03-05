@@ -1,8 +1,7 @@
 import "react-native-gesture-handler";
 import React from "react";
-import { StatusBar } from "react-native";
-import { ThemeProvider } from "styled-components";
-import AppLoading from "expo-app-loading";
+import { ActivityIndicator, StatusBar, View } from "react-native";
+import { ThemeProvider } from "styled-components/native";
 import {
   useFonts,
   Poppins_400Regular,
@@ -10,17 +9,26 @@ import {
   Poppins_700Bold,
 } from "@expo-google-fonts/poppins";
 
-import "intl";
-import "intl/locale-data/jsonp/pt-BR";
-
 import theme from "./src/global/styles/theme";
-
 import { Routes } from "./src/routes";
-
-import { SignIn } from "./src/Screens/SignIn";
 import { AuthProvider, useAuth } from "./src/hooks/auth";
-
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+
+function AppBootstrap() {
+  const { isUserStorageLoading } = useAuth();
+
+  if (isUserStorageLoading) {
+    return (
+      <View
+        style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
+      >
+        <ActivityIndicator color={theme.colors.primary} size="large" />
+      </View>
+    );
+  }
+
+  return <Routes />;
+}
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -29,10 +37,12 @@ export default function App() {
     Poppins_700Bold,
   });
 
-  const { userStorageLoanding } = useAuth();
-
-  if (!fontsLoaded || userStorageLoanding) {
-    return <AppLoading />;
+  if (!fontsLoaded) {
+    return (
+      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+        <ActivityIndicator color={theme.colors.primary} size="large" />
+      </View>
+    );
   }
 
   return (
@@ -44,7 +54,7 @@ export default function App() {
           backgroundColor="transparent"
         />
         <AuthProvider>
-          <Routes />
+          <AppBootstrap />
         </AuthProvider>
       </ThemeProvider>
     </GestureHandlerRootView>

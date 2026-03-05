@@ -43,7 +43,7 @@ export const Category = styled.TouchableOpacity<CategoryProps>`
     isActive ? theme.colors.secondary_light : theme.colors.background};
 `;
 
-export const Icon = styled(Feather)`
+export const Icon = styled(Feather as any)`
   font-size: ${RFValue(20)}px;
   margin-right: 16px;
 `;

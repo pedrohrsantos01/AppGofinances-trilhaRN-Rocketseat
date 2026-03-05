@@ -1,7 +1,7 @@
 import React from "react";
 import { Platform } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
-import { useTheme } from "styled-components";
+import { useTheme } from "styled-components/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 const { Navigator, Screen } = createBottomTabNavigator();

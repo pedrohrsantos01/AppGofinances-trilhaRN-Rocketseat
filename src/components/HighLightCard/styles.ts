@@ -31,7 +31,7 @@ export const Title = styled.Text<TypeProps> `
     color: ${({theme, type}) => 
     type === 'total' ? theme.colors.shape : theme.colors.text_dark};
 `;
-export const Icon = styled(Feather)<TypeProps> `
+export const Icon = styled(Feather as any)<TypeProps> `
     font-size: ${RFValue(40)}px;
 
     ${(props) => props.type === 'up' && css `

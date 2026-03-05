@@ -4,9 +4,20 @@
     "slug": "gofinances",
     "scheme": "gofinances",
     "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
     "assetBundlePatterns": [
       "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "package": "com.pedrohrsantos01.gofinances"
+    },
+    "plugins": [
+      "expo-font",
+      "expo-web-browser"
     ]
-  },
-  "name": "gofinances"
+  }
 }

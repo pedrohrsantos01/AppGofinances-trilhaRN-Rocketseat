@@ -43,7 +43,7 @@ export const Button = styled(RectButton)`
   padding: 16px;
 `;
 
-export const Icon = styled(Feather)<IconProps>`
+export const Icon = styled(Feather as any)<IconProps>`
   font-size: ${RFValue(24)}px;
   margin-right: 12px;
 
