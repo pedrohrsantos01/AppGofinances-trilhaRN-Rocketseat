@@ -1,4 +1,4 @@
-import { categories } from "../../../utils/categories";
+import { categories } from "../../../shared/utils/categories";
 
 export interface RawTransaction {
   type: "positive" | "negative";

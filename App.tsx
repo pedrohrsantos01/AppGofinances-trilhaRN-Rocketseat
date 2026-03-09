@@ -1,4 +1,4 @@
-import "react-native-gesture-handler";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import React from "react";
 import { ActivityIndicator, StatusBar, View } from "react-native";
 import { ThemeProvider } from "styled-components/native";
@@ -9,19 +9,16 @@ import {
   Poppins_700Bold,
 } from "@expo-google-fonts/poppins";
 
-import theme from "./src/global/styles/theme";
-import { Routes } from "./src/routes";
-import { AuthProvider, useAuth } from "./src/hooks/auth";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
+import theme from "./src/shared/presentation/theme/theme";
+import { Routes } from "./src/navigation";
+import { AuthProvider, useAuth } from "./src/features/auth/presentation/AuthContext";
 
 function AppBootstrap() {
   const { isUserStorageLoading } = useAuth();
 
   if (isUserStorageLoading) {
     return (
-      <View
-        style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
-      >
+      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
         <ActivityIndicator color={theme.colors.primary} size="large" />
       </View>
     );
@@ -48,11 +45,7 @@ export default function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <ThemeProvider theme={theme}>
-        <StatusBar
-          barStyle="light-content"
-          translucent
-          backgroundColor="transparent"
-        />
+        <StatusBar barStyle="light-content" translucent backgroundColor="transparent" />
         <AuthProvider>
           <AppBootstrap />
         </AuthProvider>
