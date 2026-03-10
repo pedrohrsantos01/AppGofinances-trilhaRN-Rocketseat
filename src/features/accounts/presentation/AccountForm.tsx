@@ -48,7 +48,7 @@ export function AccountForm() {
       });
 
       navigation.goBack();
-    } catch (error) {
+    } catch {
       Alert.alert("Erro ao criar conta");
     }
   }

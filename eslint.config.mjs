@@ -20,6 +20,18 @@ export default [
     ],
   },
   {
+    files: ["**/*Styles.{ts,tsx}", "**/styles.{ts,tsx}"],
+    rules: {
+      "import/no-named-as-default": "off",
+    },
+  },
+  {
+    files: ["src/__tests__/**/*.{ts,tsx}"],
+    rules: {
+      "@typescript-eslint/no-require-imports": "off",
+    },
+  },
+  {
     files: ["src/features/*/presentation/**/*.{ts,tsx}", "src/shared/presentation/**/*.{ts,tsx}"],
     rules: {
       "no-restricted-imports": [
@@ -27,9 +39,9 @@ export default [
         {
           patterns: [
             {
-              group: ["**/domain/*", "**/application/*"],
+              group: ["**/domain/*"],
               message:
-                "Presentation layer should not import domain/application directly. Use hooks or props.",
+                "Presentation layer should not import domain directly. Use application layer or hooks.",
             },
           ],
         },

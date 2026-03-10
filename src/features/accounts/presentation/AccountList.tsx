@@ -54,6 +54,7 @@ export function AccountList() {
   useFocusEffect(
     useCallback(() => {
       loadAccounts();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
   );
 

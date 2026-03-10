@@ -1,5 +1,5 @@
 import styled from "styled-components/native";
-import { RFValue, RFPercentage } from "react-native-responsive-fontsize";
+import { RFValue } from "react-native-responsive-fontsize";
 import { Feather } from "@expo/vector-icons";
 
 interface TransactionProps {
@@ -24,7 +24,7 @@ export const Amount = styled.Text<TransactionProps>`
   font-size: ${RFValue(20)}px;
 
   color: ${({ theme, type }) =>
-    type == "positive" ? theme.colors.sucess : theme.colors.attention};
+    type === "positive" ? theme.colors.sucess : theme.colors.attention};
   margin-top: 2px;
 `;
 

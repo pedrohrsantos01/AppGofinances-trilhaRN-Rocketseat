@@ -1,0 +1,298 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`HighLightCard should render expense card (type down) correctly 1`] = `
+<View
+  style={
+    {
+      "backgroundColor": "#ffff",
+      "borderBottomLeftRadius": 5,
+      "borderBottomRightRadius": 5,
+      "borderTopLeftRadius": 5,
+      "borderTopRightRadius": 5,
+      "marginRight": 18,
+      "paddingBottom": 82,
+      "paddingLeft": 23,
+      "paddingRight": 23,
+      "paddingTop": 19,
+      "width": 589,
+    }
+  }
+  type="down"
+>
+  <View
+    style={
+      {
+        "flexDirection": "row",
+        "justifyContent": "space-between",
+      }
+    }
+  >
+    <Text
+      style={
+        {
+          "color": "#000000",
+          "fontFamily": "Poppins_500Medium",
+          "fontSize": 27,
+        }
+      }
+      type="down"
+    >
+       
+      Saidas
+       
+    </Text>
+    <Text
+      allowFontScaling={false}
+      selectable={false}
+      style={
+        [
+          {
+            "color": undefined,
+            "fontSize": 12,
+          },
+          {
+            "color": "#e83f5b",
+            "fontSize": 78,
+          },
+          {
+            "fontFamily": "feather",
+            "fontStyle": "normal",
+            "fontWeight": "normal",
+          },
+          {},
+        ]
+      }
+      type="down"
+    >
+      
+    </Text>
+  </View>
+  <View
+    style={{}}
+  >
+    <Text
+      style={
+        {
+          "color": "#000000",
+          "fontFamily": "Poppins_500Medium",
+          "fontSize": 63,
+          "marginTop": 38,
+        }
+      }
+      type="down"
+    >
+      R$ 2.500,00
+    </Text>
+    <Text
+      style={
+        {
+          "color": "#969cb2",
+          "fontFamily": "Poppins_400Regular",
+          "fontSize": 24,
+        }
+      }
+      type="down"
+    >
+      Ultima saida 20 de marco
+    </Text>
+  </View>
+</View>
+`;
+
+exports[`HighLightCard should render income card (type up) correctly 1`] = `
+<View
+  style={
+    {
+      "backgroundColor": "#ffff",
+      "borderBottomLeftRadius": 5,
+      "borderBottomRightRadius": 5,
+      "borderTopLeftRadius": 5,
+      "borderTopRightRadius": 5,
+      "marginRight": 18,
+      "paddingBottom": 82,
+      "paddingLeft": 23,
+      "paddingRight": 23,
+      "paddingTop": 19,
+      "width": 589,
+    }
+  }
+  type="up"
+>
+  <View
+    style={
+      {
+        "flexDirection": "row",
+        "justifyContent": "space-between",
+      }
+    }
+  >
+    <Text
+      style={
+        {
+          "color": "#000000",
+          "fontFamily": "Poppins_500Medium",
+          "fontSize": 27,
+        }
+      }
+      type="up"
+    >
+       
+      Entradas
+       
+    </Text>
+    <Text
+      allowFontScaling={false}
+      selectable={false}
+      style={
+        [
+          {
+            "color": undefined,
+            "fontSize": 12,
+          },
+          {
+            "color": "#12A454",
+            "fontSize": 78,
+          },
+          {
+            "fontFamily": "feather",
+            "fontStyle": "normal",
+            "fontWeight": "normal",
+          },
+          {},
+        ]
+      }
+      type="up"
+    >
+      
+    </Text>
+  </View>
+  <View
+    style={{}}
+  >
+    <Text
+      style={
+        {
+          "color": "#000000",
+          "fontFamily": "Poppins_500Medium",
+          "fontSize": 63,
+          "marginTop": 38,
+        }
+      }
+      type="up"
+    >
+      R$ 5.000,00
+    </Text>
+    <Text
+      style={
+        {
+          "color": "#969cb2",
+          "fontFamily": "Poppins_400Regular",
+          "fontSize": 24,
+        }
+      }
+      type="up"
+    >
+      Ultima entrada 15 de marco
+    </Text>
+  </View>
+</View>
+`;
+
+exports[`HighLightCard should render total card correctly 1`] = `
+<View
+  style={
+    {
+      "backgroundColor": "#FF872C",
+      "borderBottomLeftRadius": 5,
+      "borderBottomRightRadius": 5,
+      "borderTopLeftRadius": 5,
+      "borderTopRightRadius": 5,
+      "marginRight": 18,
+      "paddingBottom": 82,
+      "paddingLeft": 23,
+      "paddingRight": 23,
+      "paddingTop": 19,
+      "width": 589,
+    }
+  }
+  type="total"
+>
+  <View
+    style={
+      {
+        "flexDirection": "row",
+        "justifyContent": "space-between",
+      }
+    }
+  >
+    <Text
+      style={
+        {
+          "color": "#ffff",
+          "fontFamily": "Poppins_500Medium",
+          "fontSize": 27,
+        }
+      }
+      type="total"
+    >
+       
+      Total
+       
+    </Text>
+    <Text
+      allowFontScaling={false}
+      selectable={false}
+      style={
+        [
+          {
+            "color": undefined,
+            "fontSize": 12,
+          },
+          {
+            "color": "#ffff",
+            "fontSize": 78,
+          },
+          {
+            "fontFamily": "feather",
+            "fontStyle": "normal",
+            "fontWeight": "normal",
+          },
+          {},
+        ]
+      }
+      type="total"
+    >
+      
+    </Text>
+  </View>
+  <View
+    style={{}}
+  >
+    <Text
+      style={
+        {
+          "color": "#ffff",
+          "fontFamily": "Poppins_500Medium",
+          "fontSize": 63,
+          "marginTop": 38,
+        }
+      }
+      type="total"
+    >
+      R$ 2.500,00
+    </Text>
+    <Text
+      style={
+        {
+          "color": "#ffff",
+          "fontFamily": "Poppins_400Regular",
+          "fontSize": 24,
+        }
+      }
+      type="total"
+    >
+      01 a 20 de marco
+    </Text>
+  </View>
+</View>
+`;

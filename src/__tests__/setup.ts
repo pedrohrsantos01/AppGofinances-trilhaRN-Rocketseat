@@ -101,3 +101,105 @@ jest.mock("react-native-svg", () => {
 jest.mock("victory-native", () => ({
   VictoryPie: "VictoryPie",
 }));
+
+// Mock expo-notifications
+jest.mock("expo-notifications", () => ({
+  setNotificationHandler: jest.fn(),
+  getPermissionsAsync: jest.fn().mockResolvedValue({ status: "granted" }),
+  requestPermissionsAsync: jest.fn().mockResolvedValue({ status: "granted" }),
+  scheduleNotificationAsync: jest.fn().mockResolvedValue("mock-notification-id"),
+  cancelScheduledNotificationAsync: jest.fn().mockResolvedValue(undefined),
+  cancelAllScheduledNotificationsAsync: jest.fn().mockResolvedValue(undefined),
+  setNotificationChannelAsync: jest.fn().mockResolvedValue(undefined),
+  SchedulableTriggerInputTypes: { TIME_INTERVAL: 1 },
+  AndroidImportance: { HIGH: 4 },
+}));
+
+// Mock expo-sqlite with in-memory store for integration tests
+jest.mock("expo-sqlite", () => {
+  const stores: Record<string, Record<string, unknown>[]> = {};
+
+  function getTable(name: string): Record<string, unknown>[] {
+    if (!stores[name]) stores[name] = [];
+    return stores[name];
+  }
+
+  function parseInsert(
+    sql: string,
+    params: unknown[]
+  ): { table: string; row: Record<string, unknown> } | null {
+    const match = sql.match(/INSERT\s+INTO\s+(\w+)\s*\(([^)]+)\)/i);
+    if (!match) return null;
+    const table = match[1];
+    const columns = match[2].split(",").map((c: string) => c.trim());
+    const row: Record<string, unknown> = {};
+    columns.forEach((col: string, i: number) => {
+      row[col] = params[i] ?? null;
+    });
+    return { table, row };
+  }
+
+  function parseSelect(
+    sql: string,
+    params: unknown[]
+  ): { table: string; conditions: Record<string, unknown> } {
+    const tableMatch = sql.match(/FROM\s+(\w+)/i);
+    const table = tableMatch ? tableMatch[1] : "";
+    const conditions: Record<string, unknown> = {};
+    const whereMatches = [...sql.matchAll(/(\w+)\s*=\s*\?/g)];
+    whereMatches.forEach((m, i) => {
+      conditions[m[1]] = params[i];
+    });
+    return { table, conditions };
+  }
+
+  function matchesConditions(
+    row: Record<string, unknown>,
+    conditions: Record<string, unknown>
+  ): boolean {
+    return Object.entries(conditions).every(([key, value]) => row[key] === value);
+  }
+
+  const mockDb = {
+    runAsync: jest.fn(async (sql: string, params: unknown[] = []) => {
+      const sqlUpper = sql.trim().toUpperCase();
+      if (sqlUpper.startsWith("INSERT")) {
+        const parsed = parseInsert(sql, params);
+        if (parsed) {
+          getTable(parsed.table).push(parsed.row);
+        }
+      } else if (sqlUpper.startsWith("DELETE")) {
+        const { table, conditions } = parseSelect(sql, params);
+        const t = getTable(table);
+        const filtered = t.filter((row) => !matchesConditions(row, conditions));
+        stores[table] = filtered;
+      } else if (sqlUpper.startsWith("UPDATE")) {
+        // Simple update - not fully implemented for all cases
+      }
+      return { changes: 1 };
+    }),
+    getAllAsync: jest.fn(async (sql: string, params: unknown[] = []) => {
+      const { table, conditions } = parseSelect(sql, params);
+      const t = getTable(table);
+      return t.filter((row) => matchesConditions(row, conditions));
+    }),
+    getFirstAsync: jest.fn(async (sql: string, params: unknown[] = []) => {
+      const { table, conditions } = parseSelect(sql, params);
+      const t = getTable(table);
+      return t.find((row) => matchesConditions(row, conditions)) ?? null;
+    }),
+    execAsync: jest.fn(async () => {}),
+    withExclusiveTransactionAsync: jest.fn(async (fn: (txn: unknown) => Promise<void>) => {
+      await fn(mockDb);
+    }),
+    closeAsync: jest.fn(async () => {}),
+  };
+
+  return {
+    openDatabaseAsync: jest.fn(async () => mockDb),
+    __resetStores: () => {
+      Object.keys(stores).forEach((key) => delete stores[key]);
+    },
+    __mockDb: mockDb,
+  };
+});

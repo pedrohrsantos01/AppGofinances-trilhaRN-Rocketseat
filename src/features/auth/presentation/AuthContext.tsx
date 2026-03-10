@@ -6,6 +6,7 @@ import * as WebBrowser from "expo-web-browser";
 import Constants from "expo-constants";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { initializeApp } from "../../../shared/infra/startup";
 
 const GOOGLE_CLIENT_ID = process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID;
 const GOOGLE_REDIRECT_URI = process.env.EXPO_PUBLIC_GOOGLE_REDIRECT_URI;
@@ -147,6 +148,7 @@ function AuthProvider({ children }: AuthProviderProps) {
 
       setUser(userLogged);
       await AsyncStorage.setItem(userStorageKey, JSON.stringify(userLogged));
+      await initializeApp(userLogged.id);
     } catch (error) {
       if (__DEV__) {
         console.log("Google SignIn debug", {
@@ -187,6 +189,7 @@ function AuthProvider({ children }: AuthProviderProps) {
 
         setUser(userLogged);
         await AsyncStorage.setItem(userStorageKey, JSON.stringify(userLogged));
+        await initializeApp(userLogged.id);
       }
     } catch (error) {
       throw new Error(String(error));
@@ -205,6 +208,7 @@ function AuthProvider({ children }: AuthProviderProps) {
       if (userStoraged) {
         const userLogged = JSON.parse(userStoraged) as User;
         setUser(userLogged);
+        await initializeApp(userLogged.id);
       }
       setIsUserStorageLoading(false);
     }

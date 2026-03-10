@@ -1,8 +1,7 @@
 import styled from "styled-components/native";
 import { Feather } from "@expo/vector-icons";
 import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
-import { getBottomSpace, getStatusBarHeight } from "react-native-iphone-x-helper";
-import { FlatList, FlatListProps } from "react-native";
+import { FlatList, FlatListProps, Platform, StatusBar } from "react-native";
 import { BorderlessButton } from "react-native-gesture-handler";
 
 import { DataListProps } from "./Dashboard";
@@ -27,7 +26,7 @@ export const UserWrapper = styled.View`
   width: 100%;
 
   padding: 0 24px;
-  margin-top: ${getStatusBarHeight() + RFValue(28)}px;
+  margin-top: ${(StatusBar.currentHeight ?? 44) + RFValue(28)}px;
 
   flex-direction: row;
   justify-content: space-between;
@@ -100,8 +99,11 @@ export const ListTransactions = styled(
   FlatList as new (props: FlatListProps<DataListProps>) => FlatList<DataListProps>
 ).attrs({
   showsVerticalScrollIndicator: false,
+  removeClippedSubviews: true,
+  maxToRenderPerBatch: 10,
+  windowSize: 5,
   contentContainerStyle: {
-    paddingBottom: getBottomSpace(),
+    paddingBottom: Platform.OS === "ios" ? 34 : 16,
   },
 })``;
 
@@ -109,4 +111,18 @@ export const LoadContainer = styled.View`
   flex: 1;
   justify-content: center;
   align-items: center;
+`;
+
+export const DeleteAction = styled.View`
+  background-color: ${({ theme }) => theme.colors.attention};
+  justify-content: center;
+  align-items: center;
+  width: 80px;
+  border-radius: 5px;
+  margin-bottom: 16px;
+`;
+
+export const DeleteActionIcon = styled(Feather)`
+  color: ${({ theme }) => theme.colors.shape};
+  font-size: ${RFValue(24)}px;
 `;

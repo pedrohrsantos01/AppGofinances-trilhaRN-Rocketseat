@@ -1,8 +1,8 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import React, { useCallback, useRef, useState } from "react";
+import { ActivityIndicator, Alert, Animated, TouchableOpacity } from "react-native";
+import { Swipeable } from "react-native-gesture-handler";
 
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { useTheme } from "styled-components/native";
 import { useAuth } from "../../auth/presentation/AuthContext";
 
@@ -11,6 +11,10 @@ import {
   TransactionCard,
   TransactionCardProps,
 } from "../../../shared/presentation/components/TransactionCard";
+
+import { TransactionRepository } from "../infra/TransactionRepository";
+import { Transaction } from "../../../shared/domain/entities/Transaction";
+import { Money } from "../../../shared/domain/value-objects/Money";
 
 import {
   Container,
@@ -28,6 +32,8 @@ import {
   ListTransactions,
   LogoutButton,
   LoadContainer,
+  DeleteAction,
+  DeleteActionIcon,
 } from "./DashboardStyles";
 
 export interface DataListProps extends TransactionCardProps {
@@ -44,102 +50,84 @@ interface HighLightData {
   total: HighLightProps;
 }
 
+const transactionRepo = new TransactionRepository();
+
+function formatCurrency(cents: number): string {
+  return Money.fromCents(cents).toFormatted();
+}
+
+function getLastTransactionDate(txs: Transaction[], type: "income" | "expense"): string | 0 {
+  const filtered = txs.filter((tx) => tx.type === type);
+  if (filtered.length === 0) return 0;
+
+  const lastDate = new Date(Math.max(...filtered.map((tx) => new Date(tx.date).getTime())));
+  return `${lastDate.getDate()} de ${lastDate.toLocaleString("pt-BR", {
+    month: "long",
+  })}`;
+}
+
 export function Dashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const [transactions, setTransactions] = useState<DataListProps[]>([]);
   const [highlightData, setHighlightData] = useState<HighLightData>({} as HighLightData);
+  const [rawTransactions, setRawTransactions] = useState<Transaction[]>([]);
 
   const theme = useTheme();
   const { signOut, user } = useAuth();
-
-  function getTransactionDate(collection: DataListProps[], type: "positive" | "negative") {
-    const collectionFilttered = collection.filter((transaction) => transaction.type === type);
-
-    if (collectionFilttered.length === 0) {
-      return 0;
-    }
-
-    const lastTransaction = new Date(
-      Math.max.apply(
-        Math,
-        collectionFilttered.map((transaction) => new Date(transaction.date).getTime())
-      )
-    );
-
-    return `${lastTransaction.getDate()} de ${lastTransaction.toLocaleString("pt-BR", {
-      month: "long",
-    })}`;
-  }
+  const navigation = useNavigation<any>();
+  const swipeableRefs = useRef<Map<string, Swipeable>>(new Map());
 
   async function loadTransactions() {
-    const dataKey = `@gofinances:transactions_user${user.id}`;
-    const response = await AsyncStorage.getItem(dataKey);
-    const transactions = response ? JSON.parse(response) : [];
+    setIsLoading(true);
+    const txs = await transactionRepo.listByUser(user.id);
 
     let entriesTotal = 0;
     let expensiveTotal = 0;
 
-    const transactionsFormatted: DataListProps[] = transactions.map((item: DataListProps) => {
-      if (item.type === "positive") {
-        entriesTotal += Number(item.amount);
-      } else {
-        expensiveTotal += Number(item.amount);
+    const transactionsFormatted: DataListProps[] = txs.map((tx) => {
+      if (tx.type === "income") {
+        entriesTotal += tx.amount_cents;
+      } else if (tx.type === "expense") {
+        expensiveTotal += tx.amount_cents;
       }
 
-      const amount = Number(item.amount).toLocaleString("pt-BR", {
-        style: "currency",
-        currency: "BRL",
-      });
-
+      const amount = Money.fromCents(tx.amount_cents).toFormatted();
       const date = Intl.DateTimeFormat("pt-BR", {
         day: "2-digit",
         month: "2-digit",
         year: "2-digit",
-      }).format(new Date(item.date));
+      }).format(new Date(tx.date));
 
       return {
-        id: item.id,
-        name: item.name,
+        id: tx.id,
+        name: tx.name,
         amount,
-        type: item.type,
-        category: item.category,
+        type: tx.type === "income" ? "positive" : "negative",
+        category: tx.category_id,
         date,
       };
     });
 
     setTransactions(transactionsFormatted);
-    const lastTransactionEntries = getTransactionDate(transactions, "positive");
-    const lastTransactionExpensives = getTransactionDate(transactions, "negative");
-    const totalInterval =
-      lastTransactionExpensives === 0 ? "Não há transações" : `01 à ${lastTransactionExpensives}`;
+    setRawTransactions(txs);
+
+    const lastEntries = getLastTransactionDate(txs, "income");
+    const lastExpensives = getLastTransactionDate(txs, "expense");
+    const totalInterval = lastExpensives === 0 ? "Não há transações" : `01 à ${lastExpensives}`;
 
     const total = entriesTotal - expensiveTotal;
     setHighlightData({
       entries: {
-        amount: entriesTotal.toLocaleString("pt-BR", {
-          style: "currency",
-          currency: "BRL",
-        }),
-        lastTransaction:
-          lastTransactionEntries === 0
-            ? "Não há transações"
-            : `Última entrada ${lastTransactionEntries}`,
+        amount: formatCurrency(entriesTotal),
+        lastTransaction: lastEntries === 0 ? "Não há transações" : `Última entrada ${lastEntries}`,
       },
       expensives: {
-        amount: expensiveTotal.toLocaleString("pt-BR", {
-          style: "currency",
-          currency: "BRL",
-        }),
+        amount: formatCurrency(expensiveTotal),
         lastTransaction:
-          lastTransactionExpensives === 0
-            ? "Não há transações"
-            : `Última saída ${lastTransactionExpensives}`,
+          lastExpensives === 0 ? "Não há transações" : `Última saída ${lastExpensives}`,
       },
       total: {
-        amount: total.toLocaleString("pt-BR", {
-          style: "currency",
-          currency: "BRL",
-        }),
+        amount: formatCurrency(total),
         lastTransaction: totalInterval,
       },
     });
@@ -147,13 +135,42 @@ export function Dashboard() {
     setIsLoading(false);
   }
 
-  useEffect(() => {
-    loadTransactions();
-  }, []);
+  async function handleDeleteTransaction(id: string) {
+    Alert.alert("Excluir transação", "Tem certeza que deseja excluir esta transação?", [
+      { text: "Cancelar", style: "cancel" },
+      {
+        text: "Excluir",
+        style: "destructive",
+        onPress: async () => {
+          await transactionRepo.delete(id);
+          loadTransactions();
+        },
+      },
+    ]);
+  }
+
+  function handleEditTransaction(id: string) {
+    const tx = rawTransactions.find((t) => t.id === id);
+    if (tx) {
+      navigation.navigate("EditTransaction", { transaction: tx });
+    }
+  }
+
+  function renderRightActions(
+    _progress: Animated.AnimatedInterpolation<number>,
+    _dragX: Animated.AnimatedInterpolation<number>
+  ) {
+    return (
+      <DeleteAction>
+        <DeleteActionIcon name="trash-2" />
+      </DeleteAction>
+    );
+  }
 
   useFocusEffect(
     useCallback(() => {
       loadTransactions();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
   );
 
@@ -211,7 +228,25 @@ export function Dashboard() {
             <ListTransactions
               data={transactions}
               keyExtractor={(item) => item.id}
-              renderItem={({ item }) => <TransactionCard data={item} />}
+              renderItem={({ item }) => (
+                <Swipeable
+                  ref={(ref) => {
+                    if (ref) swipeableRefs.current.set(item.id, ref);
+                  }}
+                  renderRightActions={renderRightActions}
+                  onSwipeableOpen={() => {
+                    swipeableRefs.current.get(item.id)?.close();
+                    handleDeleteTransaction(item.id);
+                  }}
+                >
+                  <TouchableOpacity
+                    activeOpacity={0.7}
+                    onPress={() => handleEditTransaction(item.id)}
+                  >
+                    <TransactionCard data={item} />
+                  </TouchableOpacity>
+                </Swipeable>
+              )}
             />
           </Transactions>
         </>

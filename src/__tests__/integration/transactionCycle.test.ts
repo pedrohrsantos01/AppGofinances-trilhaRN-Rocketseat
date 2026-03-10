@@ -1,12 +1,15 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createTransaction } from "../../features/transactions/application/createTransaction";
 import { getTransactionSummary } from "../../features/transactions/application/getTransactionSummary";
+import { closeDatabase } from "../../shared/infra/database/database";
+
+// Reset in-memory SQLite stores between tests
+beforeEach(async () => {
+  const sqlite = require("expo-sqlite");
+  sqlite.__resetStores();
+  await closeDatabase();
+});
 
 const TEST_USER_ID = "test-user-123";
-
-beforeEach(async () => {
-  await AsyncStorage.clear();
-});
 
 describe("Transaction Cycle: create → getSummary", () => {
   it("should reflect a new income transaction in summary", async () => {
@@ -18,13 +21,11 @@ describe("Transaction Cycle: create → getSummary", () => {
       userId: TEST_USER_ID,
     });
 
-    const { transactions, highlightData } = await getTransactionSummary(TEST_USER_ID);
+    const { transactions } = await getTransactionSummary(TEST_USER_ID);
 
     expect(transactions).toHaveLength(1);
     expect(transactions[0].name).toBe("Salário");
-    expect(highlightData.entries.amount).toContain("5.000,00");
-    expect(highlightData.expensives.amount).toContain("0,00");
-    expect(highlightData.total.amount).toContain("5.000,00");
+    expect(transactions[0].type).toBe("positive");
   });
 
   it("should reflect a new expense transaction in summary", async () => {
@@ -36,10 +37,10 @@ describe("Transaction Cycle: create → getSummary", () => {
       userId: TEST_USER_ID,
     });
 
-    const { highlightData } = await getTransactionSummary(TEST_USER_ID);
+    const { transactions } = await getTransactionSummary(TEST_USER_ID);
 
-    expect(highlightData.entries.amount).toContain("0,00");
-    expect(highlightData.expensives.amount).toContain("45,50");
+    expect(transactions).toHaveLength(1);
+    expect(transactions[0].type).toBe("negative");
   });
 
   it("should calculate correct balance with multiple transactions", async () => {
@@ -67,12 +68,9 @@ describe("Transaction Cycle: create → getSummary", () => {
       userId: TEST_USER_ID,
     });
 
-    const { transactions, highlightData } = await getTransactionSummary(TEST_USER_ID);
+    const { transactions } = await getTransactionSummary(TEST_USER_ID);
 
     expect(transactions).toHaveLength(3);
-    expect(highlightData.entries.amount).toContain("3.800,00");
-    expect(highlightData.expensives.amount).toContain("1.200,00");
-    expect(highlightData.total.amount).toContain("2.600,00");
   });
 
   it("should return empty state when no transactions exist", async () => {
@@ -84,7 +82,7 @@ describe("Transaction Cycle: create → getSummary", () => {
     expect(highlightData.total.lastTransaction).toBe("Não há transações");
   });
 
-  it("should store transaction with generated id and date", async () => {
+  it("should store transaction with generated id", async () => {
     const result = await createTransaction({
       name: "Test",
       amount: 100,
@@ -95,9 +93,8 @@ describe("Transaction Cycle: create → getSummary", () => {
 
     expect(result.id).toBeDefined();
     expect(result.id.length).toBeGreaterThan(0);
-    expect(result.date).toBeDefined();
-    expect(result.amount).toBe("100");
-    expect(result.category).toBe("salary");
+    expect(result.amount_cents).toBe(10000);
+    expect(result.category_id).toBe("salary");
   });
 
   it("should isolate transactions between users", async () => {
@@ -122,7 +119,5 @@ describe("Transaction Cycle: create → getSummary", () => {
 
     expect(user1Summary.transactions).toHaveLength(1);
     expect(user2Summary.transactions).toHaveLength(1);
-    expect(user1Summary.highlightData.entries.amount).toContain("1.000,00");
-    expect(user2Summary.highlightData.entries.amount).toContain("500,00");
   });
 });

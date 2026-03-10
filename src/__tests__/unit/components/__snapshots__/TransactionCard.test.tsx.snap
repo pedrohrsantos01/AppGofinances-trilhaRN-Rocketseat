@@ -1,0 +1,224 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TransactionCard should render expense transaction correctly 1`] = `
+<View
+  style={
+    {
+      "backgroundColor": "#ffff",
+      "borderBottomLeftRadius": 5,
+      "borderBottomRightRadius": 5,
+      "borderTopLeftRadius": 5,
+      "borderTopRightRadius": 5,
+      "marginBottom": 16,
+      "paddingBottom": 17,
+      "paddingLeft": 24,
+      "paddingRight": 24,
+      "paddingTop": 17,
+    }
+  }
+>
+  <Text
+    style={
+      {
+        "fontFamily": "Poppins_400Regular",
+        "fontSize": 27,
+      }
+    }
+  >
+    Mercado
+  </Text>
+  <Text
+    style={
+      {
+        "color": "#e83f5b",
+        "fontFamily": "Poppins_400Regular",
+        "fontSize": 39,
+        "marginTop": 2,
+      }
+    }
+    type="negative"
+  >
+    - 
+    R$ 350,00
+  </Text>
+  <View
+    style={
+      {
+        "alignItems": "center",
+        "flexDirection": "row",
+        "justifyContent": "space-between",
+        "marginTop": 19,
+      }
+    }
+  >
+    <View
+      style={
+        {
+          "alignItems": "center",
+          "flexDirection": "row",
+        }
+      }
+    >
+      <Text
+        allowFontScaling={false}
+        selectable={false}
+        style={
+          [
+            {
+              "color": undefined,
+              "fontSize": 12,
+            },
+            {
+              "color": "#969cb2",
+              "fontSize": 39,
+            },
+            {
+              "fontFamily": "feather",
+              "fontStyle": "normal",
+              "fontWeight": "normal",
+            },
+            {},
+          ]
+        }
+      >
+        
+      </Text>
+      <Text
+        style={
+          {
+            "color": "#969cb2",
+            "fontSize": 27,
+            "marginLeft": 17,
+          }
+        }
+      >
+        Alimentação
+         
+      </Text>
+    </View>
+    <Text
+      style={
+        {
+          "color": "#969cb2",
+          "fontSize": 27,
+        }
+      }
+    >
+       
+      15/03/26
+       
+    </Text>
+  </View>
+</View>
+`;
+
+exports[`TransactionCard should render income transaction correctly 1`] = `
+<View
+  style={
+    {
+      "backgroundColor": "#ffff",
+      "borderBottomLeftRadius": 5,
+      "borderBottomRightRadius": 5,
+      "borderTopLeftRadius": 5,
+      "borderTopRightRadius": 5,
+      "marginBottom": 16,
+      "paddingBottom": 17,
+      "paddingLeft": 24,
+      "paddingRight": 24,
+      "paddingTop": 17,
+    }
+  }
+>
+  <Text
+    style={
+      {
+        "fontFamily": "Poppins_400Regular",
+        "fontSize": 27,
+      }
+    }
+  >
+    Salario
+  </Text>
+  <Text
+    style={
+      {
+        "color": "#12A454",
+        "fontFamily": "Poppins_400Regular",
+        "fontSize": 39,
+        "marginTop": 2,
+      }
+    }
+    type="positive"
+  >
+    R$ 5.000,00
+  </Text>
+  <View
+    style={
+      {
+        "alignItems": "center",
+        "flexDirection": "row",
+        "justifyContent": "space-between",
+        "marginTop": 19,
+      }
+    }
+  >
+    <View
+      style={
+        {
+          "alignItems": "center",
+          "flexDirection": "row",
+        }
+      }
+    >
+      <Text
+        allowFontScaling={false}
+        selectable={false}
+        style={
+          [
+            {
+              "color": undefined,
+              "fontSize": 12,
+            },
+            {
+              "color": "#969cb2",
+              "fontSize": 39,
+            },
+            {
+              "fontFamily": "feather",
+              "fontStyle": "normal",
+              "fontWeight": "normal",
+            },
+            {},
+          ]
+        }
+      >
+        
+      </Text>
+      <Text
+        style={
+          {
+            "color": "#969cb2",
+            "fontSize": 27,
+            "marginLeft": 17,
+          }
+        }
+      >
+        Salário
+         
+      </Text>
+    </View>
+    <Text
+      style={
+        {
+          "color": "#969cb2",
+          "fontSize": 27,
+        }
+      }
+    >
+       
+      01/03/26
+       
+    </Text>
+  </View>
+</View>
+`;

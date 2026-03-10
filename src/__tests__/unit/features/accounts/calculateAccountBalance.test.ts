@@ -1,7 +1,4 @@
-import {
-  calculateAccountBalance,
-  AccountBalanceResult,
-} from "../../../../features/accounts/domain/calculateAccountBalance";
+import { calculateAccountBalance } from "../../../../features/accounts/domain/calculateAccountBalance";
 import { Transaction } from "../../../../shared/domain/entities/Transaction";
 
 function makeTransaction(overrides: Partial<Transaction> = {}): Transaction {

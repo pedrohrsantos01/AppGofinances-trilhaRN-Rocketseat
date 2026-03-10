@@ -1,9 +1,7 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import {
-  calculateSummary,
-  formatLastTransactionDate,
-  RawTransaction,
-} from "../domain/calculateSummary";
+import { TransactionRepository } from "../infra/TransactionRepository";
+import { Money } from "../../../shared/domain/value-objects/Money";
+
+const transactionRepo = new TransactionRepository();
 
 export interface FormattedTransaction {
   id: string;
@@ -25,13 +23,6 @@ export interface TransactionSummaryOutput {
   highlightData: HighlightData;
 }
 
-function formatCurrency(value: number): string {
-  return value.toLocaleString("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-  });
-}
-
 function formatDate(dateString: string): string {
   return Intl.DateTimeFormat("pt-BR", {
     day: "2-digit",
@@ -40,40 +31,56 @@ function formatDate(dateString: string): string {
   }).format(new Date(dateString));
 }
 
+function formatLastDate(txDates: Date[]): string | null {
+  if (txDates.length === 0) return null;
+  const last = new Date(Math.max(...txDates.map((d) => d.getTime())));
+  return `${last.getDate()} de ${last.toLocaleString("pt-BR", { month: "long" })}`;
+}
+
 export async function getTransactionSummary(userId: string): Promise<TransactionSummaryOutput> {
-  const dataKey = `@gofinances:transactions_user${userId}`;
-  const response = await AsyncStorage.getItem(dataKey);
-  const rawTransactions: RawTransaction[] = response ? JSON.parse(response) : [];
+  const txs = await transactionRepo.listByUser(userId);
 
-  const summary = calculateSummary(rawTransactions);
+  let entriesTotal = 0;
+  let expensesTotal = 0;
+  const incomeDates: Date[] = [];
+  const expenseDates: Date[] = [];
 
-  const transactions: FormattedTransaction[] = rawTransactions.map((item) => ({
-    id: item.id,
-    name: item.name,
-    amount: formatCurrency(Number(item.amount)),
-    type: item.type,
-    category: item.category,
-    date: formatDate(item.date),
-  }));
+  const transactions: FormattedTransaction[] = txs.map((tx) => {
+    if (tx.type === "income") {
+      entriesTotal += tx.amount_cents;
+      incomeDates.push(new Date(tx.date));
+    } else if (tx.type === "expense") {
+      expensesTotal += tx.amount_cents;
+      expenseDates.push(new Date(tx.date));
+    }
 
-  const lastIncomeLabel = formatLastTransactionDate(summary.lastIncomeDate);
-  const lastExpenseLabel = formatLastTransactionDate(summary.lastExpenseDate);
+    return {
+      id: tx.id,
+      name: tx.name,
+      amount: Money.fromCents(tx.amount_cents).toFormatted(),
+      type: tx.type === "income" ? ("positive" as const) : ("negative" as const),
+      category: tx.category_id,
+      date: formatDate(tx.date),
+    };
+  });
+
+  const lastIncome = formatLastDate(incomeDates);
+  const lastExpense = formatLastDate(expenseDates);
+
+  const balance = entriesTotal - expensesTotal;
 
   const highlightData: HighlightData = {
     entries: {
-      amount: formatCurrency(summary.entriesTotal),
-      lastTransaction:
-        summary.lastIncomeDate === null ? "Não há transações" : `Última entrada ${lastIncomeLabel}`,
+      amount: Money.fromCents(entriesTotal).toFormatted(),
+      lastTransaction: lastIncome === null ? "Não há transações" : `Última entrada ${lastIncome}`,
     },
     expensives: {
-      amount: formatCurrency(summary.expensesTotal),
-      lastTransaction:
-        summary.lastExpenseDate === null ? "Não há transações" : `Última saída ${lastExpenseLabel}`,
+      amount: Money.fromCents(expensesTotal).toFormatted(),
+      lastTransaction: lastExpense === null ? "Não há transações" : `Última saída ${lastExpense}`,
     },
     total: {
-      amount: formatCurrency(summary.balance),
-      lastTransaction:
-        summary.lastExpenseDate === null ? "Não há transações" : `01 à ${lastExpenseLabel}`,
+      amount: Money.fromCents(balance).toFormatted(),
+      lastTransaction: lastExpense === null ? "Não há transações" : `01 à ${lastExpense}`,
     },
   };
 
