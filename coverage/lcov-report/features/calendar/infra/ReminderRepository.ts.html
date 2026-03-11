@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">35.29% </span>
+                <span class="strong">38.09% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>6/17</span>
+                <span class='fraction'>8/21</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">30% </span>
+                <span class="strong">42.85% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>3/10</span>
+                <span class='fraction'>6/14</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">28.57% </span>
+                <span class="strong">27.27% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>2/7</span>
+                <span class='fraction'>3/11</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">35.29% </span>
+                <span class="strong">38.09% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>6/17</span>
+                <span class='fraction'>8/21</span>
             </div>
         
             
@@ -178,7 +178,20 @@
 <a name='L113'></a><a href='#L113'>113</a>
 <a name='L114'></a><a href='#L114'>114</a>
 <a name='L115'></a><a href='#L115'>115</a>
-<a name='L116'></a><a href='#L116'>116</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L116'></a><a href='#L116'>116</a>
+<a name='L117'></a><a href='#L117'>117</a>
+<a name='L118'></a><a href='#L118'>118</a>
+<a name='L119'></a><a href='#L119'>119</a>
+<a name='L120'></a><a href='#L120'>120</a>
+<a name='L121'></a><a href='#L121'>121</a>
+<a name='L122'></a><a href='#L122'>122</a>
+<a name='L123'></a><a href='#L123'>123</a>
+<a name='L124'></a><a href='#L124'>124</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -241,6 +254,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -259,6 +273,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -289,11 +304,17 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { getDatabase } from "../../../shared/infra/database/database";
+import { enqueueChange } from "../../sync/application/syncService";
+&nbsp;
+function toPayload(r: Reminder): Record&lt;string, unknown&gt; {
+  return { ...r, is_completed: r.is_completed ? <span class="branch-0 cbranch-no" title="branch not covered" >1 </span>: 0, recurrence: r.recurrence ?? null };
+}
 &nbsp;
 export interface Reminder {
   id: string;
@@ -355,6 +376,7 @@ export class ReminderRepository {
         reminder.updated_at,
       ]
     );
+    enqueueChange("reminders", reminder.id, "insert", toPayload(reminder)).catch(<span class="fstat-no" title="function not covered" >()</span> =&gt; {});
     return reminder;
   }
 &nbsp;
@@ -374,15 +396,16 @@ export class ReminderRepository {
         reminder.id,
       ]
     );
+<span class="cstat-no" title="statement not covered" >    enqueueChange("reminders", reminder.id, "update", toPayload(reminder)).catch(<span class="fstat-no" title="function not covered" >()</span> =&gt; {});</span>
 <span class="cstat-no" title="statement not covered" >    return reminder;</span>
   }
 &nbsp;
 <span class="fstat-no" title="function not covered" >  as</span>ync markCompleted(id: string): Promise&lt;void&gt; {
     const db = <span class="cstat-no" title="statement not covered" >await getDatabase();</span>
-<span class="cstat-no" title="statement not covered" >    await db.runAsync(</span>
-      "UPDATE reminders SET is_completed = 1, updated_at = ? WHERE id = ?",
-      [new Date().toISOString(), id]
-    );
+<span class="cstat-no" title="statement not covered" >    await db.runAsync("UPDATE reminders SET is_completed = 1, updated_at = ? WHERE id = ?", [</span>
+      new Date().toISOString(),
+      id,
+    ]);
   }
 &nbsp;
 <span class="fstat-no" title="function not covered" >  as</span>ync listByUser(userId: string): Promise&lt;Reminder[]&gt; {
@@ -406,6 +429,7 @@ export class ReminderRepository {
 <span class="fstat-no" title="function not covered" >  as</span>ync delete(id: string): Promise&lt;void&gt; {
     const db = <span class="cstat-no" title="statement not covered" >await getDatabase();</span>
 <span class="cstat-no" title="statement not covered" >    await db.runAsync("DELETE FROM reminders WHERE id = ?", [id]);</span>
+<span class="cstat-no" title="statement not covered" >    enqueueChange("reminders", id, "delete", null).catch(<span class="fstat-no" title="function not covered" >()</span> =&gt; {});</span>
   }
 }
 &nbsp;</pre></td></tr></table></pre>
@@ -415,7 +439,7 @@ export class ReminderRepository {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-03-10T17:22:57.985Z
+                at 2026-03-11T11:48:42.146Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

@@ -1,5 +1,59 @@
 # Changelog
 
+## Release 2 - Automacao e Diferenciacao
+
+### 1. Metas Financeiras
+- Goal entity com progresso, projecao mensal e deteccao de atraso
+- createGoal, contributeToGoal com auto-complete ao atingir target
+- goalProgress, goalRemaining, monthlyProjection, isGoalDelayed, daysUntilTarget
+- GoalRepository com sync_queue integration
+- Telas: GoalList com modal de contribuicao, GoalForm
+- Testes: 26 unit (15 domain + 5 create + 6 contribute)
+
+### 2. Insights Automaticos
+- Deteccao de despesas recorrentes (3+ meses, <10% variacao)
+- Anomalias de gasto (>50% acima da media historica por categoria)
+- Tendencia por categoria (up/down/stable com threshold de 5%)
+- generateInsights orquestra todas as analises a partir do historico
+- Tela: InsightList com cards coloridos por severidade (info/warning/alert)
+- Testes: 22 unit (17 domain + 5 application)
+
+### 3. Open Finance Brasil
+- OpenFinanceConnection entity com gestao de consentimento
+- mapProviderTransaction (CREDIT/DEBIT -> income/expense, decimal -> cents)
+- isConsentValid, needsConsentRenewal (7 dias), deduplicateImported
+- OpenFinanceProvider interface + StubOpenFinanceProvider
+- syncOpenFinance application layer com deduplicacao
+- Testes: 15 unit (mapeamento, consentimento, deduplicacao)
+- Nota: integracao real requer credenciais do Banco Central
+
+### 4. Previsao de Fluxo de Caixa
+- detectRecurringPatterns (via recurring_rule_id, 2+ ocorrencias)
+- projectRecurring e projectInstallments para projecao futura
+- buildProjection com periodos 30/60/90 dias
+- getCashFlowProjection integra AccountRepo + TransactionRepo
+- Tela: CashFlowScreen com saldo atual + cards por periodo
+- Testes: 20 unit (15 domain + 5 application)
+
+### 5. Compartilhamento Opcional
+- SharedAccess entity com roles (owner/editor/viewer) e status (pending/accepted/revoked)
+- canUserRead, canUserEdit, isOwner, validateInvite, getActiveShares
+- inviteUser com validacao de email e prevencao de duplicatas
+- revokeAccess para remover permissoes
+- SharedAccessRepository via Supabase (feature cloud-only)
+- Tela: SharingScreen com convite por email e gerenciamento
+- Testes: 23 unit (18 domain + 5 application)
+
+### Dashboard Header
+- Icones de acesso rapido: trending-up (cashflow), zap (insights), target (goals), cloud (sync), users (sharing), power (logout)
+
+### Metricas Release 2
+- 365 testes, 42 suites, 5 snapshots
+- 0 erros TypeScript, 0 erros ESLint
+- 14 features implementadas, 11 docs de feature
+
+---
+
 ## Release 1 - Base Robusta
 
 ### Fase 0 - Fundacao e Infraestrutura
