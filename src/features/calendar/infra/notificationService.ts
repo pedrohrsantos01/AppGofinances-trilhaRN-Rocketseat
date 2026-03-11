@@ -1,23 +1,40 @@
-import * as Notifications from "expo-notifications";
 import { Platform } from "react-native";
 import { subDays, parseISO, differenceInSeconds } from "date-fns";
 
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: false,
-    shouldShowBanner: true,
-    shouldShowList: true,
-  }),
-});
+let Notifications: typeof import("expo-notifications") | null = null;
+
+async function getNotifications() {
+  if (Notifications) return Notifications;
+  try {
+    Notifications = await import("expo-notifications");
+    Notifications.setNotificationHandler({
+      handleNotification: async () => ({
+        shouldShowAlert: true,
+        shouldPlaySound: true,
+        shouldSetBadge: false,
+        shouldShowBanner: true,
+        shouldShowList: true,
+      }),
+    });
+    return Notifications;
+  } catch {
+    return null;
+  }
+}
 
 export async function requestNotificationPermissions(): Promise<boolean> {
-  const { status: existing } = await Notifications.getPermissionsAsync();
-  if (existing === "granted") return true;
+  const mod = await getNotifications();
+  if (!mod) return false;
 
-  const { status } = await Notifications.requestPermissionsAsync();
-  return status === "granted";
+  try {
+    const { status: existing } = await mod.getPermissionsAsync();
+    if (existing === "granted") return true;
+
+    const { status } = await mod.requestPermissionsAsync();
+    return status === "granted";
+  } catch {
+    return false;
+  }
 }
 
 export async function scheduleReminderNotification(
@@ -26,6 +43,9 @@ export async function scheduleReminderNotification(
   dueDate: string,
   daysBefore: number
 ): Promise<string | null> {
+  const mod = await getNotifications();
+  if (!mod) return null;
+
   const hasPermission = await requestNotificationPermissions();
   if (!hasPermission) return null;
 
@@ -35,35 +55,55 @@ export async function scheduleReminderNotification(
   const secondsUntil = differenceInSeconds(triggerDate, new Date());
   if (secondsUntil <= 0) return null;
 
-  const id = await Notifications.scheduleNotificationAsync({
-    content: {
-      title: "Vencimento proximo",
-      body: `${title} vence em ${daysBefore} dia(s)`,
-      data: { reminderId },
-    },
-    trigger: {
-      type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
-      seconds: secondsUntil,
-    },
-  });
-
-  return id;
+  try {
+    const id = await mod.scheduleNotificationAsync({
+      content: {
+        title: "Vencimento proximo",
+        body: `${title} vence em ${daysBefore} dia(s)`,
+        data: { reminderId },
+      },
+      trigger: {
+        type: mod.SchedulableTriggerInputTypes.TIME_INTERVAL,
+        seconds: secondsUntil,
+      },
+    });
+    return id;
+  } catch {
+    return null;
+  }
 }
 
 export async function cancelNotification(notificationId: string): Promise<void> {
-  await Notifications.cancelScheduledNotificationAsync(notificationId);
+  const mod = await getNotifications();
+  if (!mod) return;
+  try {
+    await mod.cancelScheduledNotificationAsync(notificationId);
+  } catch {
+    // ignore in Expo Go
+  }
 }
 
 export async function cancelAllNotifications(): Promise<void> {
-  await Notifications.cancelAllScheduledNotificationsAsync();
+  const mod = await getNotifications();
+  if (!mod) return;
+  try {
+    await mod.cancelAllScheduledNotificationsAsync();
+  } catch {
+    // ignore in Expo Go
+  }
 }
 
 export async function setupNotificationChannel(): Promise<void> {
-  if (Platform.OS === "android") {
-    await Notifications.setNotificationChannelAsync("reminders", {
+  if (Platform.OS !== "android") return;
+  const mod = await getNotifications();
+  if (!mod) return;
+  try {
+    await mod.setNotificationChannelAsync("reminders", {
       name: "Lembretes de vencimento",
-      importance: Notifications.AndroidImportance.HIGH,
+      importance: mod.AndroidImportance.HIGH,
       vibrationPattern: [0, 250, 250, 250],
     });
+  } catch {
+    // ignore in Expo Go
   }
 }

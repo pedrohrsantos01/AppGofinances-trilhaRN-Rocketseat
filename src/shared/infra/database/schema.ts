@@ -115,6 +115,24 @@ export const CREATE_REMINDERS_TABLE = `
   );
 `;
 
+export const CREATE_GOALS_TABLE = `
+  CREATE TABLE IF NOT EXISTS goals (
+    id TEXT PRIMARY KEY NOT NULL,
+    name TEXT NOT NULL,
+    target_cents INTEGER NOT NULL,
+    current_cents INTEGER NOT NULL DEFAULT 0,
+    currency TEXT NOT NULL DEFAULT 'BRL',
+    status TEXT NOT NULL DEFAULT 'active',
+    target_date TEXT,
+    color TEXT NOT NULL DEFAULT '#5636D3',
+    icon TEXT NOT NULL DEFAULT 'flag',
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL,
+    version INTEGER NOT NULL DEFAULT 1,
+    user_id TEXT NOT NULL
+  );
+`;
+
 export const CREATE_SYNC_QUEUE_TABLE = `
   CREATE TABLE IF NOT EXISTS sync_queue (
     id TEXT PRIMARY KEY NOT NULL,
@@ -135,5 +153,6 @@ export const ALL_TABLES = [
   CREATE_INVOICES_TABLE,
   CREATE_BUDGETS_TABLE,
   CREATE_REMINDERS_TABLE,
+  CREATE_GOALS_TABLE,
   CREATE_SYNC_QUEUE_TABLE,
 ];

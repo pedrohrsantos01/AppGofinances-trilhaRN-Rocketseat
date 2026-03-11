@@ -115,6 +115,32 @@ jest.mock("expo-notifications", () => ({
   AndroidImportance: { HIGH: 4 },
 }));
 
+// Mock @supabase/supabase-js
+jest.mock("@supabase/supabase-js", () => {
+  const mockFrom = jest.fn(() => ({
+    select: jest.fn().mockReturnThis(),
+    insert: jest.fn().mockReturnThis(),
+    upsert: jest.fn().mockResolvedValue({ data: null, error: null }),
+    update: jest.fn().mockReturnThis(),
+    delete: jest.fn().mockReturnThis(),
+    eq: jest.fn().mockReturnThis(),
+    gt: jest.fn().mockReturnThis(),
+    single: jest.fn().mockResolvedValue({ data: null, error: null }),
+    then: jest.fn().mockResolvedValue({ data: [], error: null }),
+  }));
+
+  return {
+    createClient: jest.fn(() => ({
+      from: mockFrom,
+      auth: {
+        getSession: jest.fn().mockResolvedValue({ data: { session: null }, error: null }),
+        signInWithPassword: jest.fn(),
+        signOut: jest.fn(),
+      },
+    })),
+  };
+});
+
 // Mock expo-sqlite with in-memory store for integration tests
 jest.mock("expo-sqlite", () => {
   const stores: Record<string, Record<string, unknown>[]> = {};

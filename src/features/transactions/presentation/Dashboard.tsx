@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useRef } from "react";
 import { ActivityIndicator, Alert, Animated, TouchableOpacity } from "react-native";
 import { Swipeable } from "react-native-gesture-handler";
 
@@ -7,14 +7,9 @@ import { useTheme } from "styled-components/native";
 import { useAuth } from "../../auth/presentation/AuthContext";
 
 import { HighLightCard } from "../../../shared/presentation/components/HighLightCard";
-import {
-  TransactionCard,
-  TransactionCardProps,
-} from "../../../shared/presentation/components/TransactionCard";
+import { TransactionCard } from "../../../shared/presentation/components/TransactionCard";
 
-import { TransactionRepository } from "../infra/TransactionRepository";
-import { Transaction } from "../../../shared/domain/entities/Transaction";
-import { Money } from "../../../shared/domain/value-objects/Money";
+import { useTransactionStore } from "./useTransactionStore";
 
 import {
   Container,
@@ -36,121 +31,43 @@ import {
   DeleteActionIcon,
 } from "./DashboardStyles";
 
-export interface DataListProps extends TransactionCardProps {
+export interface DataListProps {
   id: string;
-}
-
-interface HighLightProps {
+  name: string;
   amount: string;
-  lastTransaction: string;
-}
-interface HighLightData {
-  entries: HighLightProps;
-  expensives: HighLightProps;
-  total: HighLightProps;
-}
-
-const transactionRepo = new TransactionRepository();
-
-function formatCurrency(cents: number): string {
-  return Money.fromCents(cents).toFormatted();
-}
-
-function getLastTransactionDate(txs: Transaction[], type: "income" | "expense"): string | 0 {
-  const filtered = txs.filter((tx) => tx.type === type);
-  if (filtered.length === 0) return 0;
-
-  const lastDate = new Date(Math.max(...filtered.map((tx) => new Date(tx.date).getTime())));
-  return `${lastDate.getDate()} de ${lastDate.toLocaleString("pt-BR", {
-    month: "long",
-  })}`;
+  type: "positive" | "negative";
+  category: string;
+  date: string;
 }
 
 export function Dashboard() {
-  const [isLoading, setIsLoading] = useState(true);
-  const [transactions, setTransactions] = useState<DataListProps[]>([]);
-  const [highlightData, setHighlightData] = useState<HighLightData>({} as HighLightData);
-  const [rawTransactions, setRawTransactions] = useState<Transaction[]>([]);
-
   const theme = useTheme();
   const { signOut, user } = useAuth();
   const navigation = useNavigation<any>();
   const swipeableRefs = useRef<Map<string, Swipeable>>(new Map());
 
-  async function loadTransactions() {
-    setIsLoading(true);
-    const txs = await transactionRepo.listByUser(user.id);
+  const {
+    formattedTransactions,
+    highlightData,
+    isLoading,
+    loadTransactions,
+    deleteTransaction,
+    getById,
+  } = useTransactionStore();
 
-    let entriesTotal = 0;
-    let expensiveTotal = 0;
-
-    const transactionsFormatted: DataListProps[] = txs.map((tx) => {
-      if (tx.type === "income") {
-        entriesTotal += tx.amount_cents;
-      } else if (tx.type === "expense") {
-        expensiveTotal += tx.amount_cents;
-      }
-
-      const amount = Money.fromCents(tx.amount_cents).toFormatted();
-      const date = Intl.DateTimeFormat("pt-BR", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "2-digit",
-      }).format(new Date(tx.date));
-
-      return {
-        id: tx.id,
-        name: tx.name,
-        amount,
-        type: tx.type === "income" ? "positive" : "negative",
-        category: tx.category_id,
-        date,
-      };
-    });
-
-    setTransactions(transactionsFormatted);
-    setRawTransactions(txs);
-
-    const lastEntries = getLastTransactionDate(txs, "income");
-    const lastExpensives = getLastTransactionDate(txs, "expense");
-    const totalInterval = lastExpensives === 0 ? "Não há transações" : `01 à ${lastExpensives}`;
-
-    const total = entriesTotal - expensiveTotal;
-    setHighlightData({
-      entries: {
-        amount: formatCurrency(entriesTotal),
-        lastTransaction: lastEntries === 0 ? "Não há transações" : `Última entrada ${lastEntries}`,
-      },
-      expensives: {
-        amount: formatCurrency(expensiveTotal),
-        lastTransaction:
-          lastExpensives === 0 ? "Não há transações" : `Última saída ${lastExpensives}`,
-      },
-      total: {
-        amount: formatCurrency(total),
-        lastTransaction: totalInterval,
-      },
-    });
-
-    setIsLoading(false);
-  }
-
-  async function handleDeleteTransaction(id: string) {
+  function handleDeleteTransaction(id: string) {
     Alert.alert("Excluir transação", "Tem certeza que deseja excluir esta transação?", [
       { text: "Cancelar", style: "cancel" },
       {
         text: "Excluir",
         style: "destructive",
-        onPress: async () => {
-          await transactionRepo.delete(id);
-          loadTransactions();
-        },
+        onPress: () => deleteTransaction(id, user.id),
       },
     ]);
   }
 
   function handleEditTransaction(id: string) {
-    const tx = rawTransactions.find((t) => t.id === id);
+    const tx = getById(id);
     if (tx) {
       navigation.navigate("EditTransaction", { transaction: tx });
     }
@@ -169,7 +86,7 @@ export function Dashboard() {
 
   useFocusEffect(
     useCallback(() => {
-      loadTransactions();
+      loadTransactions(user.id);
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
   );
@@ -196,6 +113,18 @@ export function Dashboard() {
                   <UserName> {user.name} </UserName>
                 </User>
               </UserInfo>
+              <LogoutButton onPress={() => navigation.navigate("CashFlow")}>
+                <Icon name="trending-up" />
+              </LogoutButton>
+              <LogoutButton onPress={() => navigation.navigate("InsightList")}>
+                <Icon name="zap" />
+              </LogoutButton>
+              <LogoutButton onPress={() => navigation.navigate("GoalList")}>
+                <Icon name="target" />
+              </LogoutButton>
+              <LogoutButton onPress={() => navigation.navigate("Sync")}>
+                <Icon name="cloud" />
+              </LogoutButton>
               <LogoutButton onPress={signOut}>
                 <Icon name="power" />
               </LogoutButton>
@@ -226,7 +155,7 @@ export function Dashboard() {
             <Title>Listagem</Title>
 
             <ListTransactions
-              data={transactions}
+              data={formattedTransactions}
               keyExtractor={(item) => item.id}
               renderItem={({ item }) => (
                 <Swipeable

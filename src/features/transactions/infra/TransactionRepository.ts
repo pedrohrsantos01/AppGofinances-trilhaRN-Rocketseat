@@ -1,5 +1,10 @@
 import { getDatabase } from "../../../shared/infra/database/database";
 import { Transaction } from "../../../shared/domain/entities/Transaction";
+import { enqueueChange } from "../../sync/application/syncService";
+
+function toPayload(tx: Transaction): Record<string, unknown> {
+  return { ...tx };
+}
 
 export class TransactionRepository {
   async create(tx: Transaction): Promise<Transaction> {
@@ -29,6 +34,7 @@ export class TransactionRepository {
         tx.user_id,
       ]
     );
+    enqueueChange("transactions", tx.id, "insert", toPayload(tx)).catch(() => {});
     return tx;
   }
 
@@ -63,6 +69,9 @@ export class TransactionRepository {
         );
       }
     });
+    for (const tx of transactions) {
+      enqueueChange("transactions", tx.id, "insert", toPayload(tx)).catch(() => {});
+    }
   }
 
   async update(tx: Transaction): Promise<Transaction> {
@@ -83,12 +92,15 @@ export class TransactionRepository {
         tx.id,
       ]
     );
-    return { ...tx, updated_at: now, version: tx.version + 1 };
+    const updated = { ...tx, updated_at: now, version: tx.version + 1 };
+    enqueueChange("transactions", tx.id, "update", toPayload(updated)).catch(() => {});
+    return updated;
   }
 
   async delete(id: string): Promise<void> {
     const db = await getDatabase();
     await db.runAsync("DELETE FROM transactions WHERE id = ?", [id]);
+    enqueueChange("transactions", id, "delete", null).catch(() => {});
   }
 
   async getById(id: string): Promise<Transaction | null> {

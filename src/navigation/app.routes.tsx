@@ -15,6 +15,11 @@ import { BudgetForm } from "../features/budget/presentation/BudgetForm";
 import { ReminderList } from "../features/calendar/presentation/ReminderList";
 import { ReminderForm } from "../features/calendar/presentation/ReminderForm";
 import { ImportExportScreen } from "../features/import-export/presentation/ImportExportScreen";
+import { SyncScreen } from "../features/sync/presentation/SyncScreen";
+import { GoalList } from "../features/goals/presentation/GoalList";
+import { GoalForm } from "../features/goals/presentation/GoalForm";
+import { InsightList } from "../features/insights/presentation/InsightList";
+import { CashFlowScreen } from "../features/cashflow/presentation/CashFlowScreen";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -94,6 +99,11 @@ export function AppRoutes() {
       <Stack.Screen name="ReminderList" component={ReminderList} />
       <Stack.Screen name="ReminderForm" component={ReminderForm} />
       <Stack.Screen name="ImportExport" component={ImportExportScreen} />
+      <Stack.Screen name="Sync" component={SyncScreen} />
+      <Stack.Screen name="GoalList" component={GoalList} />
+      <Stack.Screen name="GoalForm" component={GoalForm} />
+      <Stack.Screen name="InsightList" component={InsightList} />
+      <Stack.Screen name="CashFlow" component={CashFlowScreen} />
     </Stack.Navigator>
   );
 }
