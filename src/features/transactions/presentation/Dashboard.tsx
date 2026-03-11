@@ -125,6 +125,9 @@ export function Dashboard() {
               <LogoutButton onPress={() => navigation.navigate("Sync")}>
                 <Icon name="cloud" />
               </LogoutButton>
+              <LogoutButton onPress={() => navigation.navigate("Sharing")}>
+                <Icon name="users" />
+              </LogoutButton>
               <LogoutButton onPress={signOut}>
                 <Icon name="power" />
               </LogoutButton>

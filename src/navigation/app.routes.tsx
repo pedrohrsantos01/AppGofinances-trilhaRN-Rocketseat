@@ -20,6 +20,7 @@ import { GoalList } from "../features/goals/presentation/GoalList";
 import { GoalForm } from "../features/goals/presentation/GoalForm";
 import { InsightList } from "../features/insights/presentation/InsightList";
 import { CashFlowScreen } from "../features/cashflow/presentation/CashFlowScreen";
+import { SharingScreen } from "../features/sharing/presentation/SharingScreen";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -104,6 +105,7 @@ export function AppRoutes() {
       <Stack.Screen name="GoalForm" component={GoalForm} />
       <Stack.Screen name="InsightList" component={InsightList} />
       <Stack.Screen name="CashFlow" component={CashFlowScreen} />
+      <Stack.Screen name="Sharing" component={SharingScreen} />
     </Stack.Navigator>
   );
 }
