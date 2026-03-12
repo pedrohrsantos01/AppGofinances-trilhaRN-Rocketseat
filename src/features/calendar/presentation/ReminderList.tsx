@@ -11,10 +11,9 @@ import { ReminderRepository } from "../infra/ReminderRepository";
 import { UpcomingDue } from "../domain/upcomingDues";
 import { getUpcomingDues } from "../application/getUpcomingDues";
 
+import { ScreenHeader } from "../../../shared/presentation/components/ScreenHeader";
 import {
   Container,
-  Header,
-  HeaderTitle,
   AddButton,
   AddIcon,
   Content,
@@ -95,12 +94,14 @@ export function ReminderList() {
 
   return (
     <Container>
-      <Header>
-        <HeaderTitle>Vencimentos</HeaderTitle>
-        <AddButton onPress={handleAddReminder}>
-          <AddIcon name="plus" />
-        </AddButton>
-      </Header>
+      <ScreenHeader
+        title="Vencimentos"
+        rightAction={
+          <AddButton onPress={handleAddReminder}>
+            <AddIcon name="plus" />
+          </AddButton>
+        }
+      />
 
       {isLoading ? (
         <LoadContainer>

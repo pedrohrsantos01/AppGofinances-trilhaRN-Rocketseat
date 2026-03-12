@@ -1,7 +1,6 @@
 import styled from "styled-components/native";
 import { RFValue } from "react-native-responsive-fontsize";
 import { Feather } from "@expo/vector-icons";
-import { StatusBar } from "react-native";
 
 interface ProgressProps {
   percent: number;
@@ -16,26 +15,6 @@ export const Container = styled.View`
   background-color: ${({ theme }) => theme.colors.background};
 `;
 
-export const Header = styled.View`
-  background-color: ${({ theme }) => theme.colors.primary};
-  width: 100%;
-  height: ${(StatusBar.currentHeight ?? 44) + RFValue(60)}px;
-  align-items: center;
-  justify-content: flex-end;
-  padding-bottom: 19px;
-  flex-direction: row;
-  padding-left: 24px;
-  padding-right: 24px;
-`;
-
-export const Title = styled.Text`
-  flex: 1;
-  font-family: ${({ theme }) => theme.fonts.regular};
-  font-size: ${RFValue(18)}px;
-  color: ${({ theme }) => theme.colors.shape};
-  text-align: center;
-`;
-
 export const AddButton = styled.TouchableOpacity``;
 
 export const AddIcon = styled(Feather)`
@@ -45,9 +24,14 @@ export const AddIcon = styled(Feather)`
 
 export const GoalCard = styled.TouchableOpacity`
   background-color: ${({ theme }) => theme.colors.shape};
-  border-radius: 5px;
+  border-radius: ${({ theme }) => theme.radius.md}px;
   padding: ${RFValue(16)}px;
   margin-bottom: 16px;
+  shadow-color: #000;
+  shadow-offset: 0px 2px;
+  shadow-opacity: 0.06;
+  shadow-radius: 4px;
+  elevation: 2;
 `;
 
 export const GoalHeader = styled.View`

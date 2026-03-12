@@ -7,10 +7,7 @@ export const Container = styled.View`
 
 export const Header = styled.View`
   width: 100%;
-  height: 70%;
-
-  background-color: ${({ theme }) => theme.colors.primary};
-
+  height: 65%;
   justify-content: flex-end;
   align-items: center;
 `;
@@ -22,34 +19,30 @@ export const TitleWrapper = styled.View`
 export const Title = styled.Text`
   font-family: ${({ theme }) => theme.fonts.medium};
   color: ${({ theme }) => theme.colors.shape};
-  font-size: ${RFValue(30)}px;
-
+  font-size: ${RFValue(28)}px;
   text-align: center;
-
-  margin-top: 45px;
+  margin-top: ${({ theme }) => theme.spacing.xl}px;
+  line-height: ${RFValue(40)}px;
 `;
 
 export const SignInTitle = styled.Text`
   font-family: ${({ theme }) => theme.fonts.regular};
   color: ${({ theme }) => theme.colors.shape};
-  font-size: ${RFValue(16)}px;
-
+  font-size: ${RFValue(15)}px;
   text-align: center;
-
-  margin-top: 80px;
-  margin-bottom: 67px;
+  margin-top: ${({ theme }) => theme.spacing.xxl}px;
+  margin-bottom: ${({ theme }) => theme.spacing.xl}px;
+  opacity: 0.8;
 `;
 
 export const Footer = styled.View`
   width: 100%;
-  height: 30%;
-
-  background-color: ${({ theme }) => theme.colors.secondary};
+  height: 35%;
+  background-color: ${({ theme }) => theme.colors.background};
 `;
 
 export const FooterWrapper = styled.View`
   margin-top: ${RFPercentage(-4)}px;
-  padding: 0 32px;
-
+  padding: 0 ${({ theme }) => theme.spacing.xl}px;
   justify-content: space-between;
 `;

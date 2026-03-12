@@ -8,18 +8,24 @@ interface ContainerProps {
 export const Container = styled.View<ContainerProps>`
   width: 100%;
 
-  background-color: ${({ theme }) => theme.colors.shape};
+  background-color: ${({ theme }) => theme.colors.surface};
 
   flex-direction: row;
   justify-content: space-between;
 
-  padding: 13px 24px;
+  padding: ${({ theme }) => theme.spacing.md}px ${({ theme }) => theme.spacing.lg}px;
 
-  border-radius: 5px;
-  border-left-width: 5px;
+  border-radius: ${({ theme }) => theme.radius.md}px;
+  border-left-width: 4px;
   border-left-color: ${({ color }) => color};
 
-  margin-bottom: 8px;
+  margin-bottom: ${({ theme }) => theme.spacing.sm}px;
+
+  shadow-color: #000;
+  shadow-offset: 0px 1px;
+  shadow-opacity: 0.04;
+  shadow-radius: 4px;
+  elevation: 2;
 `;
 
 export const Title = styled.Text`

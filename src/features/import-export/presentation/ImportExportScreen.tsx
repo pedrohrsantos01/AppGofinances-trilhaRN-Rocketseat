@@ -9,11 +9,10 @@ import { useAuth } from "../../auth/presentation/AuthContext";
 import { processCSVImport } from "../application/importTransactions";
 import { exportToCSV } from "../application/exportTransactions";
 import { TransactionRepository } from "../../transactions/infra/TransactionRepository";
+import { ScreenHeader } from "../../../shared/presentation/components/ScreenHeader";
 
 import {
   Container,
-  Header,
-  HeaderTitle,
   Content,
   Section,
   SectionTitle,
@@ -101,9 +100,7 @@ export function ImportExportScreen() {
   if (isProcessing) {
     return (
       <Container>
-        <Header>
-          <HeaderTitle>Importar / Exportar</HeaderTitle>
-        </Header>
+        <ScreenHeader title="Importar / Exportar" showBack />
         <LoadContainer>
           <ActivityIndicator color={theme.colors.primary} size="large" />
         </LoadContainer>
@@ -113,9 +110,7 @@ export function ImportExportScreen() {
 
   return (
     <Container>
-      <Header>
-        <HeaderTitle>Importar / Exportar</HeaderTitle>
-      </Header>
+      <ScreenHeader title="Importar / Exportar" showBack />
 
       <ScrollView>
         <Content>

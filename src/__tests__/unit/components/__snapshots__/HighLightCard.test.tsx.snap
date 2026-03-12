@@ -4,16 +4,26 @@ exports[`HighLightCard should render expense card (type down) correctly 1`] = `
 <View
   style={
     {
-      "backgroundColor": "#ffff",
-      "borderBottomLeftRadius": 5,
-      "borderBottomRightRadius": 5,
-      "borderTopLeftRadius": 5,
-      "borderTopRightRadius": 5,
-      "marginRight": 18,
-      "paddingBottom": 82,
-      "paddingLeft": 23,
-      "paddingRight": 23,
-      "paddingTop": 19,
+      "backgroundColor": "#FFFFFF",
+      "borderBottomLeftRadius": 16,
+      "borderBottomRightRadius": 16,
+      "borderLeftColor": "#e83f5b",
+      "borderLeftWidth": 4,
+      "borderTopLeftRadius": 16,
+      "borderTopRightRadius": 16,
+      "elevation": 4,
+      "marginRight": 16,
+      "paddingBottom": 63,
+      "paddingLeft": 24,
+      "paddingRight": 24,
+      "paddingTop": 24,
+      "shadowColor": "#000",
+      "shadowOffset": {
+        "height": 4,
+        "width": 0,
+      },
+      "shadowOpacity": 0.08,
+      "shadowRadius": 12,
       "width": 589,
     }
   }
@@ -22,6 +32,7 @@ exports[`HighLightCard should render expense card (type down) correctly 1`] = `
   <View
     style={
       {
+        "alignItems": "center",
         "flexDirection": "row",
         "justifyContent": "space-between",
       }
@@ -30,7 +41,7 @@ exports[`HighLightCard should render expense card (type down) correctly 1`] = `
     <Text
       style={
         {
-          "color": "#000000",
+          "color": "#969cb2",
           "fontFamily": "Poppins_500Medium",
           "fontSize": 27,
         }
@@ -52,7 +63,7 @@ exports[`HighLightCard should render expense card (type down) correctly 1`] = `
           },
           {
             "color": "#e83f5b",
-            "fontSize": 78,
+            "fontSize": 55,
           },
           {
             "fontFamily": "feather",
@@ -68,15 +79,18 @@ exports[`HighLightCard should render expense card (type down) correctly 1`] = `
     </Text>
   </View>
   <View
-    style={{}}
+    style={
+      {
+        "marginTop": 24,
+      }
+    }
   >
     <Text
       style={
         {
-          "color": "#000000",
-          "fontFamily": "Poppins_500Medium",
-          "fontSize": 63,
-          "marginTop": 38,
+          "color": "#363f5f",
+          "fontFamily": "Poppins_700Bold",
+          "fontSize": 55,
         }
       }
       type="down"
@@ -89,6 +103,7 @@ exports[`HighLightCard should render expense card (type down) correctly 1`] = `
           "color": "#969cb2",
           "fontFamily": "Poppins_400Regular",
           "fontSize": 24,
+          "marginTop": 4,
         }
       }
       type="down"
@@ -103,16 +118,26 @@ exports[`HighLightCard should render income card (type up) correctly 1`] = `
 <View
   style={
     {
-      "backgroundColor": "#ffff",
-      "borderBottomLeftRadius": 5,
-      "borderBottomRightRadius": 5,
-      "borderTopLeftRadius": 5,
-      "borderTopRightRadius": 5,
-      "marginRight": 18,
-      "paddingBottom": 82,
-      "paddingLeft": 23,
-      "paddingRight": 23,
-      "paddingTop": 19,
+      "backgroundColor": "#FFFFFF",
+      "borderBottomLeftRadius": 16,
+      "borderBottomRightRadius": 16,
+      "borderLeftColor": "#12A454",
+      "borderLeftWidth": 4,
+      "borderTopLeftRadius": 16,
+      "borderTopRightRadius": 16,
+      "elevation": 4,
+      "marginRight": 16,
+      "paddingBottom": 63,
+      "paddingLeft": 24,
+      "paddingRight": 24,
+      "paddingTop": 24,
+      "shadowColor": "#000",
+      "shadowOffset": {
+        "height": 4,
+        "width": 0,
+      },
+      "shadowOpacity": 0.08,
+      "shadowRadius": 12,
       "width": 589,
     }
   }
@@ -121,6 +146,7 @@ exports[`HighLightCard should render income card (type up) correctly 1`] = `
   <View
     style={
       {
+        "alignItems": "center",
         "flexDirection": "row",
         "justifyContent": "space-between",
       }
@@ -129,7 +155,7 @@ exports[`HighLightCard should render income card (type up) correctly 1`] = `
     <Text
       style={
         {
-          "color": "#000000",
+          "color": "#969cb2",
           "fontFamily": "Poppins_500Medium",
           "fontSize": 27,
         }
@@ -151,7 +177,7 @@ exports[`HighLightCard should render income card (type up) correctly 1`] = `
           },
           {
             "color": "#12A454",
-            "fontSize": 78,
+            "fontSize": 55,
           },
           {
             "fontFamily": "feather",
@@ -167,15 +193,18 @@ exports[`HighLightCard should render income card (type up) correctly 1`] = `
     </Text>
   </View>
   <View
-    style={{}}
+    style={
+      {
+        "marginTop": 24,
+      }
+    }
   >
     <Text
       style={
         {
-          "color": "#000000",
-          "fontFamily": "Poppins_500Medium",
-          "fontSize": 63,
-          "marginTop": 38,
+          "color": "#363f5f",
+          "fontFamily": "Poppins_700Bold",
+          "fontSize": 55,
         }
       }
       type="up"
@@ -188,6 +217,7 @@ exports[`HighLightCard should render income card (type up) correctly 1`] = `
           "color": "#969cb2",
           "fontFamily": "Poppins_400Regular",
           "fontSize": 24,
+          "marginTop": 4,
         }
       }
       type="up"
@@ -202,16 +232,24 @@ exports[`HighLightCard should render total card correctly 1`] = `
 <View
   style={
     {
-      "backgroundColor": "#FF872C",
-      "borderBottomLeftRadius": 5,
-      "borderBottomRightRadius": 5,
-      "borderTopLeftRadius": 5,
-      "borderTopRightRadius": 5,
-      "marginRight": 18,
-      "paddingBottom": 82,
-      "paddingLeft": 23,
-      "paddingRight": 23,
-      "paddingTop": 19,
+      "backgroundColor": "#5636D3",
+      "borderBottomLeftRadius": 16,
+      "borderBottomRightRadius": 16,
+      "borderTopLeftRadius": 16,
+      "borderTopRightRadius": 16,
+      "elevation": 4,
+      "marginRight": 16,
+      "paddingBottom": 63,
+      "paddingLeft": 24,
+      "paddingRight": 24,
+      "paddingTop": 24,
+      "shadowColor": "#000",
+      "shadowOffset": {
+        "height": 4,
+        "width": 0,
+      },
+      "shadowOpacity": 0.08,
+      "shadowRadius": 12,
       "width": 589,
     }
   }
@@ -220,6 +258,7 @@ exports[`HighLightCard should render total card correctly 1`] = `
   <View
     style={
       {
+        "alignItems": "center",
         "flexDirection": "row",
         "justifyContent": "space-between",
       }
@@ -250,7 +289,7 @@ exports[`HighLightCard should render total card correctly 1`] = `
           },
           {
             "color": "#ffff",
-            "fontSize": 78,
+            "fontSize": 55,
           },
           {
             "fontFamily": "feather",
@@ -266,15 +305,18 @@ exports[`HighLightCard should render total card correctly 1`] = `
     </Text>
   </View>
   <View
-    style={{}}
+    style={
+      {
+        "marginTop": 24,
+      }
+    }
   >
     <Text
       style={
         {
           "color": "#ffff",
-          "fontFamily": "Poppins_500Medium",
-          "fontSize": 63,
-          "marginTop": 38,
+          "fontFamily": "Poppins_700Bold",
+          "fontSize": 55,
         }
       }
       type="total"
@@ -287,6 +329,7 @@ exports[`HighLightCard should render total card correctly 1`] = `
           "color": "#ffff",
           "fontFamily": "Poppins_400Regular",
           "fontSize": 24,
+          "marginTop": 4,
         }
       }
       type="total"

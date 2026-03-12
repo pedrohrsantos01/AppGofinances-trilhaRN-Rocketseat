@@ -6,12 +6,14 @@ import { RFValue } from "react-native-responsive-fontsize";
 export const Container = styled(RectButton).attrs({
   activeOpacity: 0.7,
 })`
-  background-color: ${({ theme }) => theme.colors.shape};
+  background-color: ${({ theme }) => theme.colors.surface};
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
 
-  border-radius: 5px;
+  border-radius: ${({ theme }) => theme.radius.md}px;
+  border-width: 1px;
+  border-color: ${({ theme }) => theme.colors.border};
   padding: 18px 16px;
 `;
 

@@ -9,7 +9,8 @@ import { useAuth } from "../../auth/presentation/AuthContext";
 import { createGoal } from "../application/createGoal";
 import { Money } from "../../../shared/domain/value-objects/Money";
 
-import { Container, Header, Title, Form, Fields } from "./GoalFormStyles";
+import { ScreenHeader } from "../../../shared/presentation/components/ScreenHeader";
+import { Container, Form, Fields } from "./GoalFormStyles";
 
 const COLORS = ["#5636D3", "#FF872C", "#12A454", "#e83f5b", "#3B82F6", "#8B5CF6"];
 const ICONS = ["flag", "home", "briefcase", "heart", "star", "gift"];
@@ -61,9 +62,7 @@ export function GoalForm() {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <Container>
-        <Header>
-          <Title>Nova Meta</Title>
-        </Header>
+        <ScreenHeader title="Nova Meta" showBack />
 
         <Form>
           <Fields>

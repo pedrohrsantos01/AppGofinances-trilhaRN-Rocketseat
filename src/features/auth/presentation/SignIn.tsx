@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { ActivityIndicator, Alert, Platform } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
 import { useTheme } from "styled-components/native";
 
 import {
@@ -60,20 +61,27 @@ export function SignIn() {
 
   return (
     <Container>
-      <Header>
-        <TitleWrapper>
-          <LogoSvg width={RFValue(120)} height={RFValue(68)} />
-          <Title>
-            Controle suas {"\n"}
-            financas de forma {"\n"}
-            muito simples
-          </Title>
-        </TitleWrapper>
-        <SignInTitle>
-          Faca seu login com {"\n"}
-          uma das contas abaixo
-        </SignInTitle>
-      </Header>
+      <LinearGradient
+        colors={[theme.colors.gradient_start, theme.colors.gradient_end]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={{ flex: 1 }}
+      >
+        <Header>
+          <TitleWrapper>
+            <LogoSvg width={RFValue(120)} height={RFValue(68)} />
+            <Title>
+              Controle suas {"\n"}
+              financas de forma {"\n"}
+              muito simples
+            </Title>
+          </TitleWrapper>
+          <SignInTitle>
+            Faca seu login com {"\n"}
+            uma das contas abaixo
+          </SignInTitle>
+        </Header>
+      </LinearGradient>
       <Footer>
         <FooterWrapper>
           <SignInSocialButton

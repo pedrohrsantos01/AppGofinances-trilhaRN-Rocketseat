@@ -10,10 +10,10 @@ import { Money } from "../../../shared/domain/value-objects/Money";
 import { categories } from "../../../shared/utils/categories";
 import { listBudgets, BudgetWithStatus } from "../application/listBudgets";
 
+import { ScreenHeader } from "../../../shared/presentation/components/ScreenHeader";
+
 import {
   Container,
-  Header,
-  HeaderTitle,
   AddButton,
   AddIcon,
   MonthSelector,
@@ -114,12 +114,14 @@ export function BudgetList() {
 
   return (
     <Container>
-      <Header>
-        <HeaderTitle>Orçamentos</HeaderTitle>
-        <AddButton onPress={handleAddBudget}>
-          <AddIcon name="plus" />
-        </AddButton>
-      </Header>
+      <ScreenHeader
+        title="Orçamentos"
+        rightAction={
+          <AddButton onPress={handleAddBudget}>
+            <AddIcon name="plus" />
+          </AddButton>
+        }
+      />
 
       <MonthSelector>
         <MonthButton onPress={handlePreviousMonth}>

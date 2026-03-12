@@ -9,10 +9,9 @@ import { listGoals } from "../application/listGoals";
 import { contributeToGoal } from "../application/contributeToGoal";
 import { goalProgress, isGoalDelayed, daysUntilTarget } from "../domain/goalRules";
 
+import { ScreenHeader } from "../../../shared/presentation/components/ScreenHeader";
 import {
   Container,
-  Header,
-  Title,
   AddButton,
   AddIcon,
   GoalCard,
@@ -85,12 +84,14 @@ export function GoalList() {
 
   return (
     <Container>
-      <Header>
-        <Title>Metas</Title>
-        <AddButton onPress={() => navigation.navigate("GoalForm")}>
-          <AddIcon name="plus" />
-        </AddButton>
-      </Header>
+      <ScreenHeader
+        title="Metas"
+        rightAction={
+          <AddButton onPress={() => navigation.navigate("GoalForm")}>
+            <AddIcon name="plus" />
+          </AddButton>
+        }
+      />
 
       <FlatList
         data={goals}

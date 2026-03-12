@@ -1,41 +1,10 @@
 import styled from "styled-components/native";
 import { RFValue } from "react-native-responsive-fontsize";
-import { Feather } from "@expo/vector-icons";
-import { BorderlessButton, RectButton } from "react-native-gesture-handler";
+import { RectButton } from "react-native-gesture-handler";
 
 export const Container = styled.View`
   flex: 1;
   background-color: ${({ theme }) => theme.colors.background};
-`;
-
-export const Header = styled.View`
-  background-color: ${({ theme }) => theme.colors.primary};
-  width: 100%;
-  height: ${RFValue(113)}px;
-  align-items: center;
-  justify-content: flex-end;
-  padding-bottom: 19px;
-  flex-direction: row;
-  padding-left: 24px;
-  padding-right: 24px;
-`;
-
-export const BackButton = styled(BorderlessButton)`
-  padding: 4px;
-`;
-
-export const BackIcon = styled(Feather)`
-  color: ${({ theme }) => theme.colors.shape};
-  font-size: ${RFValue(24)}px;
-`;
-
-export const HeaderTitle = styled.Text`
-  flex: 1;
-  color: ${({ theme }) => theme.colors.shape};
-  font-family: ${({ theme }) => theme.fonts.regular};
-  font-size: ${RFValue(18)}px;
-  text-align: center;
-  margin-right: 28px;
 `;
 
 export const Form = styled.View`

@@ -1,19 +1,16 @@
 import React, { useCallback, useState } from "react";
 import { ActivityIndicator, FlatList } from "react-native";
 import { Feather } from "@expo/vector-icons";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useFocusEffect } from "@react-navigation/native";
 import { useTheme } from "styled-components/native";
 
 import { useAuth } from "../../auth/presentation/AuthContext";
 import { Insight, InsightSeverity } from "../../../shared/domain/entities/Insight";
 import { generateInsights } from "../application/generateInsights";
+import { ScreenHeader } from "../../../shared/presentation/components/ScreenHeader";
 
 import {
   Container,
-  Header,
-  BackButton,
-  BackIcon,
-  Title,
   InsightCard,
   InsightHeader,
   InsightIcon,
@@ -50,7 +47,6 @@ function severityLabel(severity: InsightSeverity): string {
 
 export function InsightList() {
   const theme = useTheme();
-  const navigation = useNavigation<any>();
   const { user } = useAuth();
 
   const [insights, setInsights] = useState<Insight[]>([]);
@@ -77,12 +73,7 @@ export function InsightList() {
 
   return (
     <Container>
-      <Header>
-        <BackButton onPress={() => navigation.goBack()}>
-          <BackIcon name="arrow-left" />
-        </BackButton>
-        <Title>Insights</Title>
-      </Header>
+      <ScreenHeader title="Insights" showBack />
 
       {isLoading ? (
         <ActivityIndicator color={theme.colors.primary} size="large" style={{ marginTop: 40 }} />

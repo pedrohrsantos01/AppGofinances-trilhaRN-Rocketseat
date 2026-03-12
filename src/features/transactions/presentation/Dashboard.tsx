@@ -1,6 +1,8 @@
 import React, { useCallback, useRef } from "react";
-import { ActivityIndicator, Alert, Animated, TouchableOpacity } from "react-native";
+import { ActivityIndicator, Alert, Animated, StatusBar, TouchableOpacity } from "react-native";
 import { Swipeable } from "react-native-gesture-handler";
+import { LinearGradient } from "expo-linear-gradient";
+import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
 
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { useTheme } from "styled-components/native";
@@ -13,19 +15,18 @@ import { useTransactionStore } from "./useTransactionStore";
 
 import {
   Container,
-  Header,
   UserWrapper,
   UserInfo,
   User,
   Photo,
   UserGreetings,
   UserName,
+  NotificationButton,
   Icon,
   HighLightCards,
   Transactions,
   Title,
   ListTransactions,
-  LogoutButton,
   LoadContainer,
   DeleteAction,
   DeleteActionIcon,
@@ -56,7 +57,7 @@ export function Dashboard() {
   } = useTransactionStore();
 
   function handleDeleteTransaction(id: string) {
-    Alert.alert("Excluir transação", "Tem certeza que deseja excluir esta transação?", [
+    Alert.alert("Excluir transacao", "Tem certeza que deseja excluir esta transacao?", [
       { text: "Cancelar", style: "cancel" },
       {
         text: "Excluir",
@@ -99,40 +100,32 @@ export function Dashboard() {
         </LoadContainer>
       ) : (
         <>
-          <Header>
+          <LinearGradient
+            colors={[theme.colors.gradient_start, theme.colors.gradient_end]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={{
+              width: "100%",
+              height: RFPercentage(38),
+              borderBottomLeftRadius: 24,
+              borderBottomRightRadius: 24,
+              paddingTop: (StatusBar.currentHeight ?? 44) + RFValue(12),
+            }}
+          >
             <UserWrapper>
               <UserInfo>
-                <Photo
-                  source={{
-                    uri: user.photo,
-                  }}
-                />
-
+                <Photo source={{ uri: user.photo }} />
                 <User>
-                  <UserGreetings>Olá,</UserGreetings>
-                  <UserName> {user.name} </UserName>
+                  <UserGreetings>Ola,</UserGreetings>
+                  <UserName>{user.name}</UserName>
                 </User>
               </UserInfo>
-              <LogoutButton onPress={() => navigation.navigate("CashFlow")}>
-                <Icon name="trending-up" />
-              </LogoutButton>
-              <LogoutButton onPress={() => navigation.navigate("InsightList")}>
-                <Icon name="zap" />
-              </LogoutButton>
-              <LogoutButton onPress={() => navigation.navigate("GoalList")}>
-                <Icon name="target" />
-              </LogoutButton>
-              <LogoutButton onPress={() => navigation.navigate("Sync")}>
-                <Icon name="cloud" />
-              </LogoutButton>
-              <LogoutButton onPress={() => navigation.navigate("Sharing")}>
-                <Icon name="users" />
-              </LogoutButton>
-              <LogoutButton onPress={signOut}>
-                <Icon name="power" />
-              </LogoutButton>
+              <NotificationButton onPress={() => navigation.navigate("InsightList")}>
+                <Icon name="bell" />
+              </NotificationButton>
             </UserWrapper>
-          </Header>
+          </LinearGradient>
+
           <HighLightCards>
             <HighLightCard
               type="up"
@@ -142,7 +135,7 @@ export function Dashboard() {
             />
             <HighLightCard
               type="down"
-              title="Saídas"
+              title="Saidas"
               amount={highlightData.expensives.amount}
               lastTransaction={highlightData.expensives.lastTransaction}
             />
@@ -155,7 +148,7 @@ export function Dashboard() {
           </HighLightCards>
 
           <Transactions>
-            <Title>Listagem</Title>
+            <Title>Transacoes recentes</Title>
 
             <ListTransactions
               data={formattedTransactions}

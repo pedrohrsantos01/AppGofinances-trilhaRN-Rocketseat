@@ -8,26 +8,6 @@ export const Container = styled.View`
   background-color: ${({ theme }) => theme.colors.background};
 `;
 
-export const Header = styled.View`
-  background-color: ${({ theme }) => theme.colors.primary};
-  width: 100%;
-  height: ${RFValue(113)}px;
-  align-items: center;
-  justify-content: flex-end;
-  padding-bottom: 19px;
-  flex-direction: row;
-  padding-left: 24px;
-  padding-right: 24px;
-`;
-
-export const HeaderTitle = styled.Text`
-  flex: 1;
-  color: ${({ theme }) => theme.colors.shape};
-  font-family: ${({ theme }) => theme.fonts.regular};
-  font-size: ${RFValue(18)}px;
-  text-align: center;
-`;
-
 export const AddButton = styled(BorderlessButton)`
   padding: 4px;
 `;
@@ -51,11 +31,16 @@ export const SectionTitle = styled.Text`
 
 export const ReminderCard = styled.View`
   background-color: ${({ theme }) => theme.colors.shape};
-  border-radius: 5px;
+  border-radius: ${({ theme }) => theme.radius.md}px;
   padding: 17px 24px;
   margin-bottom: 12px;
   flex-direction: row;
   align-items: center;
+  shadow-color: #000;
+  shadow-offset: 0px 2px;
+  shadow-opacity: 0.06;
+  shadow-radius: 4px;
+  elevation: 2;
 `;
 
 interface UrgencyIndicatorProps {

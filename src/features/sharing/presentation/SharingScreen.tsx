@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { ActivityIndicator, Alert } from "react-native";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useFocusEffect } from "@react-navigation/native";
 import { useTheme } from "styled-components/native";
 
 import { useAuth } from "../../auth/presentation/AuthContext";
@@ -12,13 +12,10 @@ import { isSupabaseConfigured } from "../../../shared/infra/supabase/client";
 import { SharedAccessRepository } from "../infra/SharedAccessRepository";
 import { inviteUser } from "../application/inviteUser";
 import { revokeAccess } from "../application/revokeAccess";
+import { ScreenHeader } from "../../../shared/presentation/components/ScreenHeader";
 
 import {
   Container,
-  Header,
-  BackButton,
-  BackIcon,
-  Title,
   Content,
   SectionTitle,
   InviteRow,
@@ -43,7 +40,6 @@ const repo = new SharedAccessRepository();
 
 export function SharingScreen() {
   const theme = useTheme();
-  const navigation = useNavigation<any>();
   const { user } = useAuth();
 
   const [shares, setShares] = useState<SharedAccess[]>([]);
@@ -121,12 +117,7 @@ export function SharingScreen() {
 
   return (
     <Container>
-      <Header>
-        <BackButton onPress={() => navigation.goBack()}>
-          <BackIcon name="arrow-left" />
-        </BackButton>
-        <Title>Compartilhamento</Title>
-      </Header>
+      <ScreenHeader title="Compartilhamento" showBack />
 
       {!configured ? (
         <NotConfiguredText>

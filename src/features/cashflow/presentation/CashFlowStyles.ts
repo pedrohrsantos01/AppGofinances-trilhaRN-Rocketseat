@@ -1,7 +1,5 @@
 import styled from "styled-components/native";
 import { RFValue } from "react-native-responsive-fontsize";
-import { Feather } from "@expo/vector-icons";
-import { StatusBar } from "react-native";
 
 interface BalanceProps {
   negative?: boolean;
@@ -10,34 +8,6 @@ interface BalanceProps {
 export const Container = styled.View`
   flex: 1;
   background-color: ${({ theme }) => theme.colors.background};
-`;
-
-export const Header = styled.View`
-  background-color: ${({ theme }) => theme.colors.primary};
-  width: 100%;
-  height: ${(StatusBar.currentHeight ?? 44) + RFValue(60)}px;
-  align-items: center;
-  justify-content: flex-end;
-  padding-bottom: 19px;
-  flex-direction: row;
-  padding-left: 24px;
-  padding-right: 24px;
-`;
-
-export const BackButton = styled.TouchableOpacity``;
-
-export const BackIcon = styled(Feather)`
-  color: ${({ theme }) => theme.colors.shape};
-  font-size: ${RFValue(24)}px;
-`;
-
-export const Title = styled.Text`
-  flex: 1;
-  font-family: ${({ theme }) => theme.fonts.regular};
-  font-size: ${RFValue(18)}px;
-  color: ${({ theme }) => theme.colors.shape};
-  text-align: center;
-  margin-right: ${RFValue(24)}px;
 `;
 
 export const Content = styled.ScrollView.attrs({
@@ -49,7 +19,7 @@ export const Content = styled.ScrollView.attrs({
 
 export const CurrentBalanceCard = styled.View`
   background-color: ${({ theme }) => theme.colors.primary};
-  border-radius: 5px;
+  border-radius: ${({ theme }) => theme.radius.md}px;
   padding: ${RFValue(20)}px;
   margin-bottom: 24px;
 `;
@@ -70,7 +40,7 @@ export const CurrentBalanceAmount = styled.Text`
 
 export const PeriodCard = styled.View`
   background-color: ${({ theme }) => theme.colors.shape};
-  border-radius: 5px;
+  border-radius: ${({ theme }) => theme.radius.md}px;
   padding: ${RFValue(16)}px;
   margin-bottom: 16px;
 `;

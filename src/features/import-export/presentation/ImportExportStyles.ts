@@ -8,24 +8,6 @@ export const Container = styled.View`
   background-color: ${({ theme }) => theme.colors.background};
 `;
 
-export const Header = styled.View`
-  background-color: ${({ theme }) => theme.colors.primary};
-  width: 100%;
-  height: ${RFValue(113)}px;
-  align-items: center;
-  justify-content: flex-end;
-  padding-bottom: 19px;
-  padding-left: 24px;
-  padding-right: 24px;
-`;
-
-export const HeaderTitle = styled.Text`
-  color: ${({ theme }) => theme.colors.shape};
-  font-family: ${({ theme }) => theme.fonts.regular};
-  font-size: ${RFValue(18)}px;
-  text-align: center;
-`;
-
 export const Content = styled.View`
   flex: 1;
   padding: 24px;
@@ -51,7 +33,7 @@ export const SectionDescription = styled.Text`
 
 export const ActionButton = styled(RectButton)`
   background-color: ${({ theme }) => theme.colors.secondary};
-  border-radius: 5px;
+  border-radius: ${({ theme }) => theme.radius.md}px;
   padding: 18px;
   flex-direction: row;
   align-items: center;
@@ -74,7 +56,7 @@ export const ResultContainer = styled.View`
   margin-top: 16px;
   padding: 16px;
   background-color: ${({ theme }) => theme.colors.shape};
-  border-radius: 5px;
+  border-radius: ${({ theme }) => theme.radius.md}px;
 `;
 
 export const ResultText = styled.Text`

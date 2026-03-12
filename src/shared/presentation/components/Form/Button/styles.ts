@@ -7,8 +7,14 @@ export const Container = styled(RectButton)`
   background-color: ${({ theme }) => theme.colors.secondary};
 
   padding: 18px;
-  border-radius: 5px;
+  border-radius: ${({ theme }) => theme.radius.md}px;
   align-items: center;
+
+  shadow-color: ${({ theme }) => theme.colors.secondary};
+  shadow-offset: 0px 4px;
+  shadow-opacity: 0.2;
+  shadow-radius: 8px;
+  elevation: 4;
 `;
 
 export const Title = styled.Text`

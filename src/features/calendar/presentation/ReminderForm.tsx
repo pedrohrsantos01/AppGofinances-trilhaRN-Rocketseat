@@ -5,18 +5,8 @@ import { useNavigation } from "@react-navigation/native";
 import { useAuth } from "../../auth/presentation/AuthContext";
 import { createReminder } from "../application/createReminder";
 
-import {
-  Container,
-  Header,
-  BackButton,
-  BackIcon,
-  HeaderTitle,
-  Form,
-  Label,
-  Input,
-  SubmitButton,
-  SubmitText,
-} from "./ReminderFormStyles";
+import { ScreenHeader } from "../../../shared/presentation/components/ScreenHeader";
+import { Container, Form, Label, Input, SubmitButton, SubmitText } from "./ReminderFormStyles";
 
 export function ReminderForm() {
   const [title, setTitle] = useState("");
@@ -56,12 +46,7 @@ export function ReminderForm() {
 
   return (
     <Container>
-      <Header>
-        <BackButton onPress={() => navigation.goBack()}>
-          <BackIcon name="arrow-left" />
-        </BackButton>
-        <HeaderTitle>Novo Lembrete</HeaderTitle>
-      </Header>
+      <ScreenHeader title="Novo Lembrete" showBack />
 
       <ScrollView>
         <Form>

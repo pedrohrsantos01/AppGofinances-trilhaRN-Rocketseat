@@ -1,19 +1,16 @@
 import React, { useCallback, useState } from "react";
 import { ActivityIndicator } from "react-native";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useFocusEffect } from "@react-navigation/native";
 import { useTheme } from "styled-components/native";
 
 import { useAuth } from "../../auth/presentation/AuthContext";
 import { Money } from "../../../shared/domain/value-objects/Money";
 import { getCashFlowProjection, CashFlowResult } from "../application/getCashFlowProjection";
 import { ProjectionPeriod } from "../domain/cashFlowRules";
+import { ScreenHeader } from "../../../shared/presentation/components/ScreenHeader";
 
 import {
   Container,
-  Header,
-  BackButton,
-  BackIcon,
-  Title,
   Content,
   CurrentBalanceCard,
   CurrentBalanceLabel,
@@ -34,7 +31,6 @@ import {
 
 export function CashFlowScreen() {
   const theme = useTheme();
-  const navigation = useNavigation<any>();
   const { user } = useAuth();
 
   const [data, setData] = useState<CashFlowResult | null>(null);
@@ -94,12 +90,7 @@ export function CashFlowScreen() {
 
   return (
     <Container>
-      <Header>
-        <BackButton onPress={() => navigation.goBack()}>
-          <BackIcon name="arrow-left" />
-        </BackButton>
-        <Title>Previsao de Caixa</Title>
-      </Header>
+      <ScreenHeader title="Previsao de Caixa" showBack />
 
       {isLoading ? (
         <ActivityIndicator color={theme.colors.primary} size="large" style={{ marginTop: 40 }} />

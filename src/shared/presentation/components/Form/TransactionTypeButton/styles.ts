@@ -17,8 +17,8 @@ export const Container = styled.View<ContainerProps>`
 
   border-width: ${({ isActive }) => (isActive ? 0 : 1.5)}px;
   border-style: solid;
-  border-color: ${({ theme }) => theme.colors.text};
-  border-radius: 5px;
+  border-color: ${({ theme }) => theme.colors.border};
+  border-radius: ${({ theme }) => theme.radius.md}px;
 
   ${({ isActive, type }) =>
     isActive &&

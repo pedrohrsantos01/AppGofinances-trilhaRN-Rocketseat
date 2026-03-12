@@ -1,6 +1,5 @@
 import styled from "styled-components/native";
 import { RFValue } from "react-native-responsive-fontsize";
-import { StatusBar } from "react-native";
 
 interface PendingProps {
   hasItems: boolean;
@@ -15,21 +14,6 @@ export const Container = styled.View`
   background-color: ${({ theme }) => theme.colors.background};
 `;
 
-export const Header = styled.View`
-  background-color: ${({ theme }) => theme.colors.primary};
-  width: 100%;
-  height: ${(StatusBar.currentHeight ?? 44) + RFValue(60)}px;
-  align-items: center;
-  justify-content: flex-end;
-  padding-bottom: 19px;
-`;
-
-export const Title = styled.Text`
-  font-family: ${({ theme }) => theme.fonts.regular};
-  font-size: ${RFValue(18)}px;
-  color: ${({ theme }) => theme.colors.shape};
-`;
-
 export const Content = styled.ScrollView.attrs({
   contentContainerStyle: { padding: 24 },
   showsVerticalScrollIndicator: false,
@@ -39,7 +23,7 @@ export const Content = styled.ScrollView.attrs({
 
 export const StatusCard = styled.View`
   background-color: ${({ theme }) => theme.colors.shape};
-  border-radius: 5px;
+  border-radius: ${({ theme }) => theme.radius.md}px;
   padding: ${RFValue(16)}px;
   margin-bottom: 16px;
 `;

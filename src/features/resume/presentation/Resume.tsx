@@ -10,11 +10,10 @@ import { useFocusEffect } from "@react-navigation/native";
 import { useTheme } from "styled-components/native";
 
 import { HistoryCard } from "../../../shared/presentation/components/HistoryCard";
+import { ScreenHeader } from "../../../shared/presentation/components/ScreenHeader";
 
 import {
   Container,
-  Header,
-  Title,
   Content,
   ChartContainer,
   MonthSelect,
@@ -50,9 +49,7 @@ export function Resume() {
 
   return (
     <Container>
-      <Header>
-        <Title> Resumo por categoria </Title>
-      </Header>
+      <ScreenHeader title="Resumo por categoria" />
       {isLoading ? (
         <LoadContainer>
           <ActivityIndicator color={theme.colors.primary} size="large" />

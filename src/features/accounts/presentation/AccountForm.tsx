@@ -9,10 +9,9 @@ import { Button } from "../../../shared/presentation/components/Form/Button";
 import { AccountType } from "../../../shared/domain/entities/Account";
 import { createAccount } from "../application/createAccount";
 
+import { ScreenHeader } from "../../../shared/presentation/components/ScreenHeader";
 import {
   Container,
-  Header,
-  Title,
   Form,
   Fields,
   TypeSelector,
@@ -60,9 +59,7 @@ export function AccountForm() {
       style={{ flex: 1 }}
     >
       <Container>
-        <Header>
-          <Title>Nova Conta</Title>
-        </Header>
+        <ScreenHeader title="Nova Conta" showBack />
 
         <Form>
           <Fields>

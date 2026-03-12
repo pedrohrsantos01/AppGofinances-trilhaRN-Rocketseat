@@ -5,13 +5,10 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { useAuth } from "../../auth/presentation/AuthContext";
 import { categories } from "../../../shared/utils/categories";
 import { createBudget } from "../application/createBudget";
+import { ScreenHeader } from "../../../shared/presentation/components/ScreenHeader";
 
 import {
   Container,
-  Header,
-  BackButton,
-  BackIcon,
-  HeaderTitle,
   Form,
   Label,
   AmountInput,
@@ -69,12 +66,7 @@ export function BudgetForm() {
 
   return (
     <Container>
-      <Header>
-        <BackButton onPress={() => navigation.goBack()}>
-          <BackIcon name="arrow-left" />
-        </BackButton>
-        <HeaderTitle>Novo Orçamento</HeaderTitle>
-      </Header>
+      <ScreenHeader title="Novo Orçamento" showBack />
 
       <ScrollView>
         <Form>

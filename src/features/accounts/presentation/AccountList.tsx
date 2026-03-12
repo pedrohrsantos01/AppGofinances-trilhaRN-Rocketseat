@@ -8,10 +8,9 @@ import { Money } from "../../../shared/domain/value-objects/Money";
 import { Account } from "../../../shared/domain/entities/Account";
 import { AccountRepository } from "../infra/AccountRepository";
 
+import { ScreenHeader } from "../../../shared/presentation/components/ScreenHeader";
 import {
   Container,
-  Header,
-  HeaderTitle,
   AddButton,
   AddIcon,
   Content,
@@ -79,12 +78,14 @@ export function AccountList() {
 
   return (
     <Container>
-      <Header>
-        <HeaderTitle>Contas</HeaderTitle>
-        <AddButton onPress={handleAddAccount}>
-          <AddIcon name="plus" />
-        </AddButton>
-      </Header>
+      <ScreenHeader
+        title="Contas"
+        rightAction={
+          <AddButton onPress={handleAddAccount}>
+            <AddIcon name="plus" />
+          </AddButton>
+        }
+      />
 
       {isLoading ? (
         <LoadContainer>

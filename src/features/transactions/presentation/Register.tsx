@@ -6,7 +6,8 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import uuid from "react-native-uuid";
 import { format } from "date-fns";
 
-import { Container, Header, Title, Form, Fields, TransactionsTypes } from "./RegisterStyles";
+import { Container, Form, Fields, TransactionsTypes } from "./RegisterStyles";
+import { ScreenHeader } from "../../../shared/presentation/components/ScreenHeader";
 
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useForm } from "react-hook-form";
@@ -225,9 +226,7 @@ export function Register() {
       style={{ flex: 1 }}
     >
       <Container>
-        <Header>
-          <Title>{isEditing ? "Editar" : "Cadastro"}</Title>
-        </Header>
+        <ScreenHeader title={isEditing ? "Editar" : "Cadastro"} showBack={isEditing} />
         <Form>
           <Fields>
             <InputForm

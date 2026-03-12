@@ -1,12 +1,11 @@
 import React, { useCallback, useEffect } from "react";
-import { Alert, StatusBar } from "react-native";
+import { Alert } from "react-native";
 import { useAuth } from "../../auth/presentation/AuthContext";
 import { useSyncStore } from "./useSyncStore";
+import { ScreenHeader } from "../../../shared/presentation/components/ScreenHeader";
 
 import {
   Container,
-  Header,
-  Title,
   Content,
   SyncButton,
   SyncButtonText,
@@ -62,9 +61,7 @@ export function SyncScreen() {
 
   return (
     <Container>
-      <Header>
-        <Title>Sincronizacao</Title>
-      </Header>
+      <ScreenHeader title="Sincronizacao" showBack />
 
       <Content>
         <StatusCard>

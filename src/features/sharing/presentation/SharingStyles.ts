@@ -1,7 +1,6 @@
 import styled from "styled-components/native";
 import { RFValue } from "react-native-responsive-fontsize";
 import { Feather } from "@expo/vector-icons";
-import { StatusBar } from "react-native";
 
 interface StatusBadgeProps {
   variant: "accepted" | "pending" | "revoked";
@@ -10,34 +9,6 @@ interface StatusBadgeProps {
 export const Container = styled.View`
   flex: 1;
   background-color: ${({ theme }) => theme.colors.background};
-`;
-
-export const Header = styled.View`
-  background-color: ${({ theme }) => theme.colors.primary};
-  width: 100%;
-  height: ${(StatusBar.currentHeight ?? 44) + RFValue(60)}px;
-  align-items: center;
-  justify-content: flex-end;
-  padding-bottom: 19px;
-  flex-direction: row;
-  padding-left: 24px;
-  padding-right: 24px;
-`;
-
-export const BackButton = styled.TouchableOpacity``;
-
-export const BackIcon = styled(Feather)`
-  color: ${({ theme }) => theme.colors.shape};
-  font-size: ${RFValue(24)}px;
-`;
-
-export const Title = styled.Text`
-  flex: 1;
-  font-family: ${({ theme }) => theme.fonts.regular};
-  font-size: ${RFValue(18)}px;
-  color: ${({ theme }) => theme.colors.shape};
-  text-align: center;
-  margin-right: ${RFValue(24)}px;
 `;
 
 export const Content = styled.ScrollView.attrs({
@@ -88,11 +59,16 @@ export const InviteButtonText = styled.Text`
 
 export const ShareCard = styled.View`
   background-color: ${({ theme }) => theme.colors.shape};
-  border-radius: 5px;
+  border-radius: ${({ theme }) => theme.radius.md}px;
   padding: ${RFValue(14)}px;
   margin-bottom: 12px;
   flex-direction: row;
   align-items: center;
+  shadow-color: #000;
+  shadow-offset: 0px 2px;
+  shadow-opacity: 0.06;
+  shadow-radius: 8px;
+  elevation: 3;
 `;
 
 export const ShareInfo = styled.View`
