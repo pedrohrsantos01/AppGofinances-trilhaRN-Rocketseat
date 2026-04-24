@@ -8,7 +8,10 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
+    "api:dev": "tsx watch apps/api/src/server.ts",
+    "api:start": "tsx apps/api/src/server.ts",
     "test": "jest",
+    "test:api": "jest --testPathPattern='apps/api'",
     "test:unit": "jest --testPathPattern='__tests__/unit'",
     "test:integration": "jest --testPathPattern='__tests__/integration'",
     "test:coverage": "jest --coverage",
@@ -20,8 +23,10 @@
     "test:e2e:build": "detox build --configuration android.debug"
   },
   "dependencies": {
-    "@expo-google-fonts/poppins": "^0.4.1",
     "@expo/vector-icons": "^15.0.2",
+    "@expo-google-fonts/poppins": "^0.4.1",
+    "@fastify/cors": "^11.2.0",
+    "@fastify/sensible": "^6.0.4",
     "@hookform/resolvers": "^5.2.2",
     "@react-native-async-storage/async-storage": "2.2.0",
     "@react-navigation/bottom-tabs": "^6.6.1",
@@ -43,6 +48,7 @@
     "expo-status-bar": "~55.0.4",
     "expo-system-ui": "~55.0.9",
     "expo-web-browser": "~55.0.9",
+    "fastify": "^5.8.5",
     "react": "19.2.0",
     "react-dom": "19.2.0",
     "react-hook-form": "^7.71.2",
@@ -56,6 +62,7 @@
     "react-native-uuid": "^2.0.3",
     "react-native-web": "^0.21.0",
     "styled-components": "^6.1.19",
+    "tsx": "^4.21.0",
     "victory-native": "^36.9.2",
     "yup": "^0.32.11",
     "zustand": "^5.0.3"

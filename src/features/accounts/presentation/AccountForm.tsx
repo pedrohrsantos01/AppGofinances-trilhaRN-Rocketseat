@@ -6,7 +6,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useAuth } from "../../auth/presentation/AuthContext";
 import { Input } from "../../../shared/presentation/components/Form/Input";
 import { Button } from "../../../shared/presentation/components/Form/Button";
-import { AccountType } from "../../../shared/domain/entities/Account";
+import type { AccountType } from "../../../shared/domain/entities/Account";
 import { createAccount } from "../application/createAccount";
 
 import { ScreenHeader } from "../../../shared/presentation/components/ScreenHeader";

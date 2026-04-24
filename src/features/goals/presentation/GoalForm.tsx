@@ -7,7 +7,7 @@ import { Input } from "../../../shared/presentation/components/Form/Input";
 import { Button } from "../../../shared/presentation/components/Form/Button";
 import { useAuth } from "../../auth/presentation/AuthContext";
 import { createGoal } from "../application/createGoal";
-import { Money } from "../../../shared/domain/value-objects/Money";
+import { decimalStringToCents } from "../../../shared/application/formatMoney";
 
 import { ScreenHeader } from "../../../shared/presentation/components/ScreenHeader";
 import { Container, Form, Fields } from "./GoalFormStyles";
@@ -19,8 +19,8 @@ export function GoalForm() {
   const [name, setName] = useState("");
   const [amount, setAmount] = useState("");
   const [targetDate, setTargetDate] = useState("");
-  const [selectedColor, setSelectedColor] = useState(COLORS[0]);
-  const [selectedIcon, setSelectedIcon] = useState(ICONS[0]);
+  const [selectedColor] = useState(COLORS[0]);
+  const [selectedIcon] = useState(ICONS[0]);
 
   const { user } = useAuth();
   const navigation = useNavigation<any>();
@@ -30,7 +30,7 @@ export function GoalForm() {
       return Alert.alert("Informe o nome da meta");
     }
 
-    const cents = Money.fromDecimal(parseFloat(amount.replace(",", "."))).toCents();
+    const cents = decimalStringToCents(amount);
     if (isNaN(cents) || cents <= 0) {
       return Alert.alert("Informe um valor valido");
     }

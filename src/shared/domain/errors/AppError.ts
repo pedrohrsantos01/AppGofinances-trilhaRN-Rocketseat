@@ -2,6 +2,7 @@ export type AppErrorCode =
   | "VALIDATION_ERROR"
   | "SYNC_CONFLICT"
   | "AUTH_REQUIRED"
+  | "FORBIDDEN"
   | "PROVIDER_ERROR"
   | "STORAGE_ERROR"
   | "NETWORK_ERROR"

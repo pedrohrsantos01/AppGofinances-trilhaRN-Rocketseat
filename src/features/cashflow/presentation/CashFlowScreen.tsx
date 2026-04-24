@@ -4,9 +4,12 @@ import { useFocusEffect } from "@react-navigation/native";
 import { useTheme } from "styled-components/native";
 
 import { useAuth } from "../../auth/presentation/AuthContext";
-import { Money } from "../../../shared/domain/value-objects/Money";
-import { getCashFlowProjection, CashFlowResult } from "../application/getCashFlowProjection";
-import { ProjectionPeriod } from "../domain/cashFlowRules";
+import { formatCents } from "../../../shared/application/formatMoney";
+import {
+  getCashFlowProjection,
+  type CashFlowResult,
+  type ProjectionPeriod,
+} from "../application/getCashFlowProjection";
 import { ScreenHeader } from "../../../shared/presentation/components/ScreenHeader";
 
 import {
@@ -56,17 +59,17 @@ export function CashFlowScreen() {
         <PeriodHeader>
           <PeriodLabel>{period.label}</PeriodLabel>
           <PeriodBalance negative={isNegative}>
-            {Money.fromCents(period.projected_balance_cents).toFormatted()}
+            {formatCents(period.projected_balance_cents)}
           </PeriodBalance>
         </PeriodHeader>
 
         <FlowRow>
           <FlowLabel>Entradas previstas</FlowLabel>
-          <FlowValue>+{Money.fromCents(period.income_cents).toFormatted()}</FlowValue>
+          <FlowValue>+{formatCents(period.income_cents)}</FlowValue>
         </FlowRow>
         <FlowRow>
           <FlowLabel>Saidas previstas</FlowLabel>
-          <FlowValue negative>-{Money.fromCents(period.expense_cents).toFormatted()}</FlowValue>
+          <FlowValue negative>-{formatCents(period.expense_cents)}</FlowValue>
         </FlowRow>
 
         {period.items.length > 0 && (
@@ -77,7 +80,7 @@ export function CashFlowScreen() {
                 <ItemName>{item.name}</ItemName>
                 <ItemAmount negative={item.type === "expense"}>
                   {item.type === "expense" ? "-" : "+"}
-                  {Money.fromCents(item.amount_cents).toFormatted()}
+                  {formatCents(item.amount_cents)}
                 </ItemAmount>
               </ItemRow>
             ))}
@@ -98,9 +101,7 @@ export function CashFlowScreen() {
         <Content>
           <CurrentBalanceCard>
             <CurrentBalanceLabel>Saldo atual</CurrentBalanceLabel>
-            <CurrentBalanceAmount>
-              {Money.fromCents(data.current_balance_cents).toFormatted()}
-            </CurrentBalanceAmount>
+            <CurrentBalanceAmount>{formatCents(data.current_balance_cents)}</CurrentBalanceAmount>
           </CurrentBalanceCard>
 
           {data.periods.map(renderPeriod)}

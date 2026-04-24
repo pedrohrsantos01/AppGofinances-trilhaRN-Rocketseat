@@ -2,6 +2,7 @@ import uuid from "react-native-uuid";
 import { format } from "date-fns";
 import { Transaction } from "../../../shared/domain/entities/Transaction";
 import { TransactionRepository } from "../infra/TransactionRepository";
+import { getDefaultAccountId } from "../../../shared/infra/database/seedDefaultAccount";
 
 const transactionRepo = new TransactionRepository();
 
@@ -33,7 +34,7 @@ export async function createTransaction(input: CreateTransactionInput): Promise<
     status: "confirmed",
     source: "manual",
     category_id: categoryKey,
-    account_id: "default-account",
+    account_id: getDefaultAccountId(userId),
     date: format(now, "yyyy-MM-dd"),
     created_at: now.toISOString(),
     updated_at: now.toISOString(),

@@ -6,9 +6,9 @@ import { format, differenceInDays, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
 import { useAuth } from "../../auth/presentation/AuthContext";
-import { Money } from "../../../shared/domain/value-objects/Money";
+import { formatCents } from "../../../shared/application/formatMoney";
 import { ReminderRepository } from "../infra/ReminderRepository";
-import { UpcomingDue } from "../domain/upcomingDues";
+import type { UpcomingDue } from "../domain/upcomingDues";
 import { getUpcomingDues } from "../application/getUpcomingDues";
 
 import { ScreenHeader } from "../../../shared/presentation/components/ScreenHeader";
@@ -72,7 +72,7 @@ export function ReminderList() {
   }
 
   function renderReminder({ item }: { item: UpcomingDue }) {
-    const amount = Money.fromCents(item.amount_cents).toFormatted();
+    const amount = formatCents(item.amount_cents);
     const dateFormatted = format(parseISO(item.due_date), "dd 'de' MMMM", {
       locale: ptBR,
     });

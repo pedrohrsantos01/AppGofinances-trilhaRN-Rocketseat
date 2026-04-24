@@ -7,6 +7,8 @@ import Constants from "expo-constants";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { initializeApp } from "../../../shared/infra/startup";
+import { clearLocalUserData } from "../../../shared/infra/security/clearLocalUserData";
+import { getSupabaseClient } from "../../../shared/infra/supabase/client";
 
 const GOOGLE_CLIENT_ID = process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID;
 const GOOGLE_REDIRECT_URI = process.env.EXPO_PUBLIC_GOOGLE_REDIRECT_URI;
@@ -42,6 +44,44 @@ interface AuthContextData {
 
 const AuthContext = createContext({} as AuthContextData);
 
+function mapSupabaseUser(authUser: {
+  id: string;
+  email?: string;
+  user_metadata?: Record<string, unknown>;
+}): User {
+  const metadata = authUser.user_metadata ?? {};
+  const name = metadata.given_name ?? metadata.name ?? "Usuario";
+  const photo = metadata.avatar_url ?? metadata.picture;
+
+  return {
+    id: authUser.id,
+    email: String(authUser.email ?? ""),
+    name: String(name),
+    photo: typeof photo === "string" ? photo : undefined,
+  };
+}
+
+async function signInSupabaseWithIdToken(
+  provider: "google" | "apple",
+  token: string
+): Promise<User> {
+  const supabase = getSupabaseClient();
+  if (!supabase) {
+    throw new Error("Supabase Auth nao configurado");
+  }
+
+  const { data, error } = await supabase.auth.signInWithIdToken({
+    provider,
+    token,
+  });
+
+  if (error || !data.user) {
+    throw error ?? new Error("Supabase Auth nao retornou usuario");
+  }
+
+  return mapSupabaseUser(data.user);
+}
+
 function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User>({} as User);
   const [isUserStorageLoading, setIsUserStorageLoading] = useState(true);
@@ -63,11 +103,14 @@ function AuthProvider({ children }: AuthProviderProps) {
 
       const request = new AuthSession.AuthRequest({
         clientId: GOOGLE_CLIENT_ID,
-        responseType: AuthSession.ResponseType.Token,
-        // Google rejects PKCE params when using implicit flow (response_type=token).
+        responseType: AuthSession.ResponseType.IdToken,
+        // Google rejects PKCE params when using implicit/id_token flow.
         usePKCE: false,
         scopes: ["openid", "profile", "email"],
         redirectUri,
+        extraParams: {
+          nonce: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+        },
       });
 
       let response: AuthSession.AuthSessionResult;
@@ -121,30 +164,13 @@ function AuthProvider({ children }: AuthProviderProps) {
         );
       }
 
-      const accessToken = response.params.access_token;
+      const idToken = response.params.id_token;
 
-      if (!accessToken) {
-        throw new Error("Google access token was not returned");
+      if (!idToken) {
+        throw new Error("Google id token was not returned");
       }
 
-      const userResponse = await fetch(GOOGLE_DISCOVERY.userInfoEndpoint, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-
-      if (!userResponse.ok) {
-        throw new Error("Failed to fetch Google user profile");
-      }
-
-      const userInfo = await userResponse.json();
-
-      const userLogged = {
-        id: String(userInfo.id),
-        email: String(userInfo.email ?? ""),
-        name: String(userInfo.given_name ?? userInfo.name ?? "Usuario"),
-        photo: userInfo.picture as string | undefined,
-      };
+      const userLogged = await signInSupabaseWithIdToken("google", idToken);
 
       setUser(userLogged);
       await AsyncStorage.setItem(userStorageKey, JSON.stringify(userLogged));
@@ -177,15 +203,11 @@ function AuthProvider({ children }: AuthProviderProps) {
       });
 
       if (credential) {
-        const name = credential.fullName?.givenName ?? "Usuario";
-        const photo = `https://ui-avatars.com/api/?name=${name}&length=1`;
+        if (!credential.identityToken) {
+          throw new Error("Apple identity token was not returned");
+        }
 
-        const userLogged = {
-          id: String(credential.user),
-          email: String(credential.email ?? ""),
-          name,
-          photo,
-        };
+        const userLogged = await signInSupabaseWithIdToken("apple", credential.identityToken);
 
         setUser(userLogged);
         await AsyncStorage.setItem(userStorageKey, JSON.stringify(userLogged));
@@ -197,6 +219,11 @@ function AuthProvider({ children }: AuthProviderProps) {
   }
 
   async function signOut() {
+    const supabase = getSupabaseClient();
+    await supabase?.auth.signOut();
+    if (user.id) {
+      await clearLocalUserData(user.id);
+    }
     setUser({} as User);
     await AsyncStorage.removeItem(userStorageKey);
   }

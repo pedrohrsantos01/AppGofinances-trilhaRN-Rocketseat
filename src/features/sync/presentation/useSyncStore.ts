@@ -1,16 +1,23 @@
 import { create } from "zustand";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { isSupabaseConfigured } from "../../../shared/infra/supabase/client";
+import { createApiClient, isApiConfigured } from "../../../shared/infra/http/createApiClient";
 import { getPendingCount } from "../application/syncService";
-import { fullSync } from "../infra/SupabaseSync";
+import { syncWithBff } from "../infra/BffSyncGateway";
 
 const LAST_SYNC_KEY = "@gofinances:last_sync_at";
+
+interface SyncResult {
+  pushed: number;
+  pulled: number;
+  conflicts: number;
+  failed: number;
+}
 
 interface SyncState {
   isSyncing: boolean;
   lastSyncAt: string | null;
   pendingCount: number;
-  lastResult: { pushed: number; pulled: number; conflicts: number; failed: number } | null;
+  lastResult: SyncResult | null;
   error: string | null;
   isConfigured: boolean;
 
@@ -28,23 +35,24 @@ export const useSyncStore = create<SyncState>((set, get) => ({
   isConfigured: false,
 
   initialize: async () => {
-    const configured = isSupabaseConfigured();
+    const configured = isApiConfigured();
     const stored = await AsyncStorage.getItem(LAST_SYNC_KEY);
     const count = await getPendingCount();
     set({ isConfigured: configured, lastSyncAt: stored, pendingCount: count });
   },
 
-  sync: async (userId: string) => {
+  sync: async (_userId: string) => {
     if (get().isSyncing) return;
-    if (!isSupabaseConfigured()) {
-      set({ error: "Supabase não configurado" });
+    if (!isApiConfigured()) {
+      set({ error: "API nao configurada" });
       return;
     }
 
     set({ isSyncing: true, error: null });
 
     try {
-      const result = await fullSync(userId, get().lastSyncAt ?? undefined);
+      const client = createApiClient();
+      const result = await syncWithBff(client, get().lastSyncAt ?? undefined);
       const now = new Date().toISOString();
       await AsyncStorage.setItem(LAST_SYNC_KEY, now);
       const count = await getPendingCount();

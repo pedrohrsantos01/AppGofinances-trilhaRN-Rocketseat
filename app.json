@@ -4,6 +4,9 @@
     "slug": "gofinances",
     "scheme": "gofinances",
     "version": "1.0.0",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
     "orientation": "portrait",
     "userInterfaceStyle": "light",
     "assetBundlePatterns": [
@@ -13,12 +16,18 @@
       "supportsTablet": true
     },
     "android": {
-      "package": "com.pedrohrsantos01.gofinances"
+      "package": "com.pedrohrsantos01.gofinances",
+      "allowBackup": false
+    },
+    "updates": {
+      "checkAutomatically": "ON_LOAD",
+      "fallbackToCacheTimeout": 0
     },
     "plugins": [
       "expo-font",
       "expo-web-browser",
-      "expo-sharing"
+      "expo-sharing",
+      "expo-notifications"
     ]
   }
 }

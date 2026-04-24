@@ -1,6 +1,6 @@
 import { create } from "zustand";
-import { Transaction } from "../../../shared/domain/entities/Transaction";
-import { Money } from "../../../shared/domain/value-objects/Money";
+import type { Transaction } from "../../../shared/domain/entities/Transaction";
+import { formatCents } from "../../../shared/application/formatMoney";
 import { TransactionRepository } from "../infra/TransactionRepository";
 
 interface HighLightProps {
@@ -37,7 +37,7 @@ interface TransactionState {
 const transactionRepo = new TransactionRepository();
 
 function formatCurrency(cents: number): string {
-  return Money.fromCents(cents).toFormatted();
+  return formatCents(cents);
 }
 
 function getLastTransactionDate(txs: Transaction[], type: "income" | "expense"): string | 0 {
@@ -61,7 +61,7 @@ function computeState(txs: Transaction[]) {
     return {
       id: tx.id,
       name: tx.name,
-      amount: Money.fromCents(tx.amount_cents).toFormatted(),
+      amount: formatCents(tx.amount_cents),
       type: tx.type === "income" ? ("positive" as const) : ("negative" as const),
       category: tx.category_id,
       date: Intl.DateTimeFormat("pt-BR", {

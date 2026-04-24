@@ -5,7 +5,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { Button } from "../../../shared/presentation/components/Form/Button";
 import { useAuth } from "../../auth/presentation/AuthContext";
 import { AccountRepository } from "../../accounts/infra/AccountRepository";
-import { Account } from "../../../shared/domain/entities/Account";
+import type { Account } from "../../../shared/domain/entities/Account";
 
 import { Container, Header, Title, Separator, Footer } from "./CategorySelectStyles";
 

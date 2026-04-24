@@ -32,6 +32,8 @@ jobs:
       - name: Integration tests
         run: npm run test:integration -- --ci --no-coverage
 
+      - name: API tests
+        run: npm run test:api -- --ci --no-coverage
+
       - name: Coverage report
         run: npm run test:coverage -- --ci
-        continue-on-error: true

@@ -5,7 +5,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { useTheme } from "styled-components/native";
 
 import { useAuth } from "../../auth/presentation/AuthContext";
-import { Insight, InsightSeverity } from "../../../shared/domain/entities/Insight";
+import type { Insight, InsightSeverity } from "../../../shared/domain/entities/Insight";
 import { generateInsights } from "../application/generateInsights";
 import { ScreenHeader } from "../../../shared/presentation/components/ScreenHeader";
 

@@ -1,60 +1,41 @@
 import { SharedAccess } from "../../../shared/domain/entities/SharedAccess";
-import { getSupabaseClient } from "../../../shared/infra/supabase/client";
+import { ApiClient } from "../../../shared/infra/http/ApiClient";
+import { createApiClient } from "../../../shared/infra/http/createApiClient";
 
-/**
- * Repository for shared access records.
- * Uses Supabase directly since sharing is inherently a cloud feature.
- */
+type SharingApiClient = Pick<ApiClient, "request">;
+
 export class SharedAccessRepository {
+  constructor(private readonly client: SharingApiClient = createApiClient()) {}
+
   async create(share: SharedAccess): Promise<SharedAccess> {
-    const client = getSupabaseClient();
-    if (!client) throw new Error("Supabase nao configurado para compartilhamento");
-
-    const { data, error } = await client.from("shared_access").insert(share).select().single();
-
-    if (error) throw error;
-    return data as SharedAccess;
+    return this.client.request<SharedAccess>("/v1/sharing/invites", {
+      method: "POST",
+      body: {
+        email: share.shared_with_email,
+        role: share.role,
+      },
+    });
   }
 
   async update(share: SharedAccess): Promise<SharedAccess> {
-    const client = getSupabaseClient();
-    if (!client) throw new Error("Supabase nao configurado para compartilhamento");
+    if (share.status === "revoked") {
+      return this.client.request<SharedAccess>(`/v1/sharing/${share.id}/revoke`, {
+        method: "PATCH",
+      });
+    }
 
-    const { data, error } = await client
-      .from("shared_access")
-      .update({ ...share, updated_at: new Date().toISOString(), version: share.version + 1 })
-      .eq("id", share.id)
-      .select()
-      .single();
-
-    if (error) throw error;
-    return data as SharedAccess;
+    throw new Error("Atualizacao de compartilhamento nao suportada pelo BFF");
   }
 
   async listByOwner(ownerId: string): Promise<SharedAccess[]> {
-    const client = getSupabaseClient();
-    if (!client) return [];
-
-    const { data, error } = await client
-      .from("shared_access")
-      .select("*")
-      .eq("owner_user_id", ownerId);
-
-    if (error) throw error;
-    return (data ?? []) as SharedAccess[];
+    const shares = await this.client.request<SharedAccess[]>("/v1/sharing/invites");
+    return shares.filter((share) => share.owner_user_id === ownerId);
   }
 
   async listSharedWithMe(userId: string): Promise<SharedAccess[]> {
-    const client = getSupabaseClient();
-    if (!client) return [];
-
-    const { data, error } = await client
-      .from("shared_access")
-      .select("*")
-      .eq("shared_with_user_id", userId)
-      .eq("status", "accepted");
-
-    if (error) throw error;
-    return (data ?? []) as SharedAccess[];
+    const shares = await this.client.request<SharedAccess[]>("/v1/sharing/invites");
+    return shares.filter(
+      (share) => share.shared_with_user_id === userId && share.status === "accepted"
+    );
   }
 }

@@ -9,6 +9,8 @@ import {
   ProjectedItem,
 } from "../domain/cashFlowRules";
 
+export type { ProjectionPeriod } from "../domain/cashFlowRules";
+
 const txRepo = new TransactionRepository();
 const accountRepo = new AccountRepository();
 

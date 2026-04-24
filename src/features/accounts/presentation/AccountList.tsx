@@ -4,8 +4,8 @@ import { useTheme } from "styled-components/native";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 
 import { useAuth } from "../../auth/presentation/AuthContext";
-import { Money } from "../../../shared/domain/value-objects/Money";
-import { Account } from "../../../shared/domain/entities/Account";
+import type { Account } from "../../../shared/domain/entities/Account";
+import { formatCents } from "../../../shared/application/formatMoney";
 import { AccountRepository } from "../infra/AccountRepository";
 
 import { ScreenHeader } from "../../../shared/presentation/components/ScreenHeader";
@@ -62,7 +62,7 @@ export function AccountList() {
   }
 
   function renderAccount({ item }: { item: Account }) {
-    const balance = Money.fromCents(item.balance_cents).toFormatted();
+    const balance = formatCents(item.balance_cents);
 
     return (
       <AccountCard>

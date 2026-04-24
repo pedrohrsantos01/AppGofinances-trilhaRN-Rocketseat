@@ -24,6 +24,9 @@ jobs:
       - name: Full test suite with coverage
         run: npm run test:coverage -- --ci --verbose
 
+      - name: API regression tests
+        run: npm run test:api -- --ci --no-coverage
+
       - name: Upload coverage artifact
         if: always()
         uses: actions/upload-artifact@v4

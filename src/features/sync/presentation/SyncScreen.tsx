@@ -45,10 +45,7 @@ export function SyncScreen() {
 
   const handleSync = useCallback(() => {
     if (!isConfigured) {
-      Alert.alert(
-        "Supabase nao configurado",
-        "Adicione EXPO_PUBLIC_SUPABASE_URL e EXPO_PUBLIC_SUPABASE_ANON_KEY no .env"
-      );
+      Alert.alert("API nao configurada", "Adicione EXPO_PUBLIC_API_BASE_URL no .env");
       return;
     }
     sync(user.id);
@@ -114,10 +111,7 @@ export function SyncScreen() {
         {error && <ErrorText>{error}</ErrorText>}
 
         {!isConfigured && (
-          <InfoText>
-            Para ativar a sincronizacao, configure as variaveis de ambiente do Supabase no arquivo
-            .env
-          </InfoText>
+          <InfoText>Para ativar a sincronizacao, configure a URL da API no arquivo .env</InfoText>
         )}
 
         <SyncButton onPress={handleSync} disabled={isSyncing || !isConfigured}>

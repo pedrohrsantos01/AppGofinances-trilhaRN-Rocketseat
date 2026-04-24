@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { Account } from "../../../shared/domain/entities/Account";
+import type { Account } from "../../../shared/domain/entities/Account";
 import { AccountRepository } from "../infra/AccountRepository";
 
 interface AccountState {

@@ -3,11 +3,11 @@ import { FlatList, Alert, TextInput, Modal, View } from "react-native";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 
 import { useAuth } from "../../auth/presentation/AuthContext";
-import { Goal } from "../../../shared/domain/entities/Goal";
-import { Money } from "../../../shared/domain/value-objects/Money";
+import type { Goal } from "../../../shared/domain/entities/Goal";
+import { formatCents } from "../../../shared/application/formatMoney";
 import { listGoals } from "../application/listGoals";
 import { contributeToGoal } from "../application/contributeToGoal";
-import { goalProgress, isGoalDelayed, daysUntilTarget } from "../domain/goalRules";
+import { daysUntilTarget, goalProgress, isGoalDelayed } from "../application/goalStatus";
 
 import { ScreenHeader } from "../../../shared/presentation/components/ScreenHeader";
 import {
@@ -118,8 +118,7 @@ export function GoalList() {
               <GoalInfo>
                 <GoalInfoText>{progress}%</GoalInfoText>
                 <GoalAmount>
-                  {Money.fromCents(item.current_cents).toFormatted()} /{" "}
-                  {Money.fromCents(item.target_cents).toFormatted()}
+                  {formatCents(item.current_cents)} / {formatCents(item.target_cents)}
                 </GoalAmount>
               </GoalInfo>
 

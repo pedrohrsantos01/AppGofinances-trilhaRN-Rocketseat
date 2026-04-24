@@ -35,11 +35,12 @@ export default [
     files: ["src/features/*/presentation/**/*.{ts,tsx}", "src/shared/presentation/**/*.{ts,tsx}"],
     rules: {
       "no-restricted-imports": [
-        "warn",
+        "error",
         {
           patterns: [
             {
               group: ["**/domain/*"],
+              allowTypeImports: true,
               message:
                 "Presentation layer should not import domain directly. Use application layer or hooks.",
             },

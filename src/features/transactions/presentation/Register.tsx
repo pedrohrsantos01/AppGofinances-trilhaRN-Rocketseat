@@ -22,10 +22,14 @@ import { CategorySelect } from "./CategorySelect";
 import { AccountSelect } from "./AccountSelect";
 import { useAuth } from "../../auth/presentation/AuthContext";
 import { TransactionRepository } from "../infra/TransactionRepository";
-import { Transaction } from "../../../shared/domain/entities/Transaction";
-import { generateInstallments } from "../domain/installments";
-import { generateRecurringTransactions } from "../domain/recurring";
-import { Money } from "../../../shared/domain/value-objects/Money";
+import type { Transaction } from "../../../shared/domain/entities/Transaction";
+import {
+  generateInstallments,
+  generateRecurringTransactions,
+} from "../application/transactionGenerators";
+import { centsToDecimalString } from "../../../shared/application/formatMoney";
+import { getPostTransactionRoute } from "../application/navigation";
+import { getDefaultAccountId } from "../../../shared/infra/database/seedDefaultAccount";
 
 import {
   ModeSelector,
@@ -75,7 +79,7 @@ export function Register() {
   });
 
   const [account, setAccount] = useState({
-    id: "default-account",
+    id: getDefaultAccountId(user.id || "anonymous"),
     name: "Carteira",
   });
 
@@ -94,7 +98,7 @@ export function Register() {
   useEffect(() => {
     if (editingTx) {
       setValue("name", editingTx.name);
-      setValue("amount", String(Money.fromCents(editingTx.amount_cents).toDecimal()));
+      setValue("amount", centsToDecimalString(editingTx.amount_cents));
       setTransactionType(editingTx.type === "income" ? "positive" : "negative");
       setCategory({
         key: editingTx.category_id,
@@ -207,12 +211,12 @@ export function Register() {
       reset();
       setTransactionType("");
       setCategory({ key: "category", name: "Categoria" });
-      setAccount({ id: "default-account", name: "Carteira" });
+      setAccount({ id: getDefaultAccountId(user.id), name: "Carteira" });
       setMode("simple");
       setInstallmentCount("2");
       setEndDate("");
 
-      navigation.navigate("Listagem");
+      navigation.navigate(getPostTransactionRoute());
     } catch (error) {
       console.log(error);
       Alert.alert("Nao foi possivel salvar");

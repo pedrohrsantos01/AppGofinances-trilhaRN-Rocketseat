@@ -43,7 +43,7 @@ export interface DataListProps {
 
 export function Dashboard() {
   const theme = useTheme();
-  const { signOut, user } = useAuth();
+  const { user } = useAuth();
   const navigation = useNavigation<any>();
   const swipeableRefs = useRef<Map<string, Swipeable>>(new Map());
 

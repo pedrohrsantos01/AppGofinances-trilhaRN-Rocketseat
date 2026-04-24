@@ -1,20 +1,23 @@
 import { useSyncStore } from "../../../../features/sync/presentation/useSyncStore";
 
-jest.mock("../../../../shared/infra/supabase/client", () => ({
-  isSupabaseConfigured: jest.fn(() => false),
-  getSupabaseClient: jest.fn(() => null),
+const mockApiClient = { request: jest.fn() };
+
+jest.mock("../../../../shared/infra/http/createApiClient", () => ({
+  isApiConfigured: jest.fn(() => false),
+  createApiClient: jest.fn(() => mockApiClient),
 }));
 
 jest.mock("../../../../features/sync/application/syncService", () => ({
   getPendingCount: jest.fn().mockResolvedValue(3),
 }));
 
-jest.mock("../../../../features/sync/infra/SupabaseSync", () => ({
-  fullSync: jest.fn().mockResolvedValue({ pushed: 0, pulled: 0, conflicts: 0, failed: 0 }),
+jest.mock("../../../../features/sync/infra/BffSyncGateway", () => ({
+  syncWithBff: jest.fn().mockResolvedValue({ pushed: 1, pulled: 0, conflicts: 0, failed: 0 }),
 }));
 
 describe("useSyncStore", () => {
   beforeEach(() => {
+    jest.clearAllMocks();
     useSyncStore.setState({
       isSyncing: false,
       lastSyncAt: null,
@@ -37,7 +40,7 @@ describe("useSyncStore", () => {
     await useSyncStore.getState().sync("user1");
 
     const state = useSyncStore.getState();
-    expect(state.error).toBe("Supabase não configurado");
+    expect(state.error).toBe("API nao configurada");
     expect(state.isSyncing).toBe(false);
   });
 
@@ -51,12 +54,27 @@ describe("useSyncStore", () => {
   it("should not start sync when already syncing", async () => {
     useSyncStore.setState({ isSyncing: true });
 
-    const { isSupabaseConfigured } = require("../../../../shared/infra/supabase/client");
-    (isSupabaseConfigured as jest.Mock).mockReturnValue(true);
+    const { isApiConfigured } = require("../../../../shared/infra/http/createApiClient");
+    (isApiConfigured as jest.Mock).mockReturnValue(true);
 
     await useSyncStore.getState().sync("user1");
 
-    // Should still be syncing (didn't change state)
     expect(useSyncStore.getState().isSyncing).toBe(true);
+  });
+
+  it("should sync through the BFF gateway when API is configured", async () => {
+    const { isApiConfigured } = require("../../../../shared/infra/http/createApiClient");
+    const { syncWithBff } = require("../../../../features/sync/infra/BffSyncGateway");
+    (isApiConfigured as jest.Mock).mockReturnValue(true);
+
+    await useSyncStore.getState().sync("user1");
+
+    expect(syncWithBff).toHaveBeenCalledWith(mockApiClient, undefined);
+    expect(useSyncStore.getState().lastResult).toEqual({
+      pushed: 1,
+      pulled: 0,
+      conflicts: 0,
+      failed: 0,
+    });
   });
 });

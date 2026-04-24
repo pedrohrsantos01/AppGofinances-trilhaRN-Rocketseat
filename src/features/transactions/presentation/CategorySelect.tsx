@@ -16,19 +16,19 @@ import {
   Footer,
 } from "./CategorySelectStyles";
 
-interface Category {
+interface CategoryOption {
   key: string;
   name: string;
 }
 
 interface Props {
-  category: Category;
-  setCategory: (name: Category) => void;
+  category: CategoryOption;
+  setCategory: (name: CategoryOption) => void;
   closeSelectCategory: () => void;
 }
 
 export function CategorySelect({ category, setCategory, closeSelectCategory }: Props) {
-  function handleCategorySelect(category: Category) {
+  function handleCategorySelect(category: CategoryOption) {
     setCategory(category);
   }
 

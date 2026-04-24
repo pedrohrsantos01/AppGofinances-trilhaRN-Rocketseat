@@ -4,7 +4,6 @@ import {
   projectRecurring,
   projectInstallments,
   buildProjection,
-  ProjectionPeriod,
 } from "../../../../features/cashflow/domain/cashFlowRules";
 
 function makeTx(overrides: Partial<Transaction>): Transaction {

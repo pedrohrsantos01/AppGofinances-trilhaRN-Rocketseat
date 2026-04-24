@@ -6,7 +6,7 @@ import { addMonths, subMonths, format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
 import { useAuth } from "../../auth/presentation/AuthContext";
-import { Money } from "../../../shared/domain/value-objects/Money";
+import { formatCents } from "../../../shared/application/formatMoney";
 import { categories } from "../../../shared/utils/categories";
 import { listBudgets, BudgetWithStatus } from "../application/listBudgets";
 
@@ -89,9 +89,9 @@ export function BudgetList() {
 
   function renderBudget({ item }: { item: BudgetWithStatus }) {
     const category = categories.find((c) => c.key === item.category_id);
-    const limit = Money.fromCents(item.limit_cents).toFormatted();
-    const spent = Money.fromCents(item.consumption.spent_cents).toFormatted();
-    const remaining = Money.fromCents(Math.max(0, item.consumption.remaining_cents)).toFormatted();
+    const limit = formatCents(item.limit_cents);
+    const spent = formatCents(item.consumption.spent_cents);
+    const remaining = formatCents(Math.max(0, item.consumption.remaining_cents));
     const alertColor = getAlertColor(item.alert);
 
     return (

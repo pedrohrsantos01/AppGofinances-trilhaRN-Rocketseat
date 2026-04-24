@@ -1,5 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { migrateAllTransactionsV1ToV2, V1Transaction } from "./v1_to_v2";
+import { getDefaultAccountId } from "../../database/seedDefaultAccount";
 
 const SCHEMA_VERSION_KEY = "@gofinances:schema_version";
 const CURRENT_SCHEMA_VERSION = 2;
@@ -24,8 +25,6 @@ async function runV1ToV2(): Promise<string[]> {
   const transactionKeys = allKeys.filter((key) => key.startsWith("@gofinances:transactions_user"));
 
   const migratedKeys: string[] = [];
-  const defaultAccountId = "default-account";
-
   for (const key of transactionKeys) {
     const raw = await AsyncStorage.getItem(key);
     if (!raw) continue;
@@ -37,7 +36,11 @@ async function runV1ToV2(): Promise<string[]> {
     // Extract userId from key pattern: @gofinances:transactions_user<userId>
     const userId = key.replace("@gofinances:transactions_user", "");
 
-    const migrated = migrateAllTransactionsV1ToV2(transactions, userId, defaultAccountId);
+    const migrated = migrateAllTransactionsV1ToV2(
+      transactions,
+      userId,
+      getDefaultAccountId(userId)
+    );
     await AsyncStorage.setItem(key, JSON.stringify(migrated));
     migratedKeys.push(key);
   }

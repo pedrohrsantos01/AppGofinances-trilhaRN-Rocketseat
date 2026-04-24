@@ -4,15 +4,15 @@ import { useFocusEffect } from "@react-navigation/native";
 import { useTheme } from "styled-components/native";
 
 import { useAuth } from "../../auth/presentation/AuthContext";
-import {
+import type {
   SharedAccess,
   ShareRole as ShareRoleType,
 } from "../../../shared/domain/entities/SharedAccess";
-import { isSupabaseConfigured } from "../../../shared/infra/supabase/client";
 import { SharedAccessRepository } from "../infra/SharedAccessRepository";
 import { inviteUser } from "../application/inviteUser";
 import { revokeAccess } from "../application/revokeAccess";
 import { ScreenHeader } from "../../../shared/presentation/components/ScreenHeader";
+import { isApiConfigured } from "../../../shared/infra/http/createApiClient";
 
 import {
   Container,
@@ -47,7 +47,7 @@ export function SharingScreen() {
   const [email, setEmail] = useState("");
   const [role, setRole] = useState<ShareRoleType>("viewer");
   const [isSending, setIsSending] = useState(false);
-  const configured = isSupabaseConfigured();
+  const configured = isApiConfigured();
 
   useFocusEffect(
     useCallback(() => {
@@ -121,8 +121,8 @@ export function SharingScreen() {
 
       {!configured ? (
         <NotConfiguredText>
-          Compartilhamento requer Supabase configurado. Adicione EXPO_PUBLIC_SUPABASE_URL e
-          EXPO_PUBLIC_SUPABASE_ANON_KEY no arquivo .env para habilitar.
+          Compartilhamento requer API configurada. Adicione EXPO_PUBLIC_API_BASE_URL no arquivo .env
+          para habilitar.
         </NotConfiguredText>
       ) : isLoading ? (
         <ActivityIndicator color={theme.colors.primary} size="large" style={{ marginTop: 40 }} />

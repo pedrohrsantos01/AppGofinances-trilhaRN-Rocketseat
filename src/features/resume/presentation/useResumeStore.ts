@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { TransactionRepository } from "../../transactions/infra/TransactionRepository";
-import { Money } from "../../../shared/domain/value-objects/Money";
+import { formatCents } from "../../../shared/application/formatMoney";
 import { categories } from "../../../shared/utils/categories";
 
 export interface CategoryData {
@@ -49,7 +49,7 @@ export const useResumeStore = create<ResumeState>((set) => ({
           color: category.color,
           key: category.key,
           total: categorySumCents,
-          totalFormatted: Money.fromCents(categorySumCents).toFormatted(),
+          totalFormatted: formatCents(categorySumCents),
           percent: `${((categorySumCents / expensesTotalCents) * 100).toFixed(0)}%`,
         });
       }

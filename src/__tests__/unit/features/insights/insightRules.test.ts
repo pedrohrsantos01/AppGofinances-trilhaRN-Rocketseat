@@ -3,8 +3,6 @@ import {
   detectRecurringExpenses,
   detectSpendingAnomalies,
   categorizeTrend,
-  RecurringPattern,
-  SpendingAnomaly,
 } from "../../../../features/insights/domain/insightRules";
 
 function makeTx(overrides: Partial<Transaction>): Transaction {

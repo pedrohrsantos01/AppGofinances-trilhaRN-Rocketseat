@@ -10,6 +10,7 @@ import { processCSVImport } from "../application/importTransactions";
 import { exportToCSV } from "../application/exportTransactions";
 import { TransactionRepository } from "../../transactions/infra/TransactionRepository";
 import { ScreenHeader } from "../../../shared/presentation/components/ScreenHeader";
+import { getDefaultAccountId } from "../../../shared/infra/database/seedDefaultAccount";
 
 import {
   Container,
@@ -62,7 +63,7 @@ export function ImportExportScreen() {
         type: "tipo",
       },
       user.id,
-      "default-account",
+      getDefaultAccountId(user.id),
       "purchases"
     );
 
