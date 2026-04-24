@@ -9,6 +9,7 @@ export type AppErrorCode =
 export interface AuthenticatedUser {
   id: string;
   email?: string;
+  accessToken?: string;
 }
 
 export interface ApiEnvelope<T> {

@@ -2,12 +2,15 @@ import {
   applyRemoteChanges,
   pullFromBff,
   pushToBff,
+  syncWithBff,
   SyncMutation,
 } from "../../../../features/sync/infra/BffSyncGateway";
 import { ApiClient } from "../../../../shared/infra/http/ApiClient";
+import { SyncQueueItem } from "../../../../features/sync/domain/syncQueue";
 
 const mockGetFirstAsync = jest.fn();
 const mockRunAsync = jest.fn();
+const mockProcessPendingQueue = jest.fn();
 
 jest.mock("../../../../shared/infra/database/database", () => ({
   getDatabase: jest.fn(async () => ({
@@ -16,10 +19,15 @@ jest.mock("../../../../shared/infra/database/database", () => ({
   })),
 }));
 
+jest.mock("../../../../features/sync/application/syncService", () => ({
+  processPendingQueue: (...args: unknown[]) => mockProcessPendingQueue(...args),
+}));
+
 describe("BffSyncGateway", () => {
   beforeEach(() => {
     mockGetFirstAsync.mockReset();
     mockRunAsync.mockReset();
+    mockProcessPendingQueue.mockReset();
   });
 
   it("pushes mutation batches to the BFF sync endpoint", async () => {
@@ -96,5 +104,52 @@ describe("BffSyncGateway", () => {
 
     expect(result).toEqual({ applied: 1, conflicts: 0 });
     expect(mockRunAsync).toHaveBeenCalledWith("DELETE FROM transactions WHERE id = ?", ["tx1"]);
+  });
+
+  it("syncs pending queue mutations and applies pulled changes", async () => {
+    const queueItem: SyncQueueItem = {
+      id: "m1",
+      entity_type: "transactions",
+      entity_id: "tx1",
+      operation: "insert",
+      payload: { id: "tx1", name: "Mercado" },
+      status: "pending",
+      retry_count: 0,
+      created_at: "2026-04-24T12:00:00.000Z",
+    };
+    mockProcessPendingQueue.mockImplementation(
+      async (syncFn: (item: SyncQueueItem) => Promise<{ success: boolean }>) => {
+        const result = await syncFn(queueItem);
+        return { synced: result.success ? 1 : 0, failed: result.success ? 0 : 1 };
+      }
+    );
+    mockGetFirstAsync.mockResolvedValue(null);
+
+    const request = jest.fn((path: string) => {
+      if (path === "/v1/sync/push") {
+        return Promise.resolve({
+          accepted: [{ id: "m1", entity_id: "tx1", server_version: 1 }],
+          conflicts: [],
+        });
+      }
+
+      return Promise.resolve({
+        changes: [
+          {
+            entity_type: "transactions",
+            entity_id: "tx1",
+            payload: { id: "tx1", name: "Mercado" },
+            server_version: 1,
+            updated_at: "2026-04-24T12:00:00.000Z",
+            deleted_at: null,
+          },
+        ],
+        cursor: "2026-04-24T12:00:00.000Z",
+      });
+    });
+
+    const result = await syncWithBff({ request } as unknown as ApiClient);
+
+    expect(result).toEqual({ pushed: 1, pulled: 1, conflicts: 0, failed: 0 });
   });
 });

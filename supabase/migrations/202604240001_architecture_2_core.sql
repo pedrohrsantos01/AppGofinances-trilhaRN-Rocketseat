@@ -1,7 +1,7 @@
 create extension if not exists pgcrypto;
 
 create table if not exists public.accounts (
-  id uuid primary key default gen_random_uuid(),
+  id text primary key default gen_random_uuid()::text,
   user_id uuid not null references auth.users(id) on delete cascade,
   name text not null,
   type text not null default 'cash',
@@ -19,9 +19,9 @@ create table if not exists public.accounts (
 );
 
 create table if not exists public.credit_cards (
-  id uuid primary key default gen_random_uuid(),
+  id text primary key default gen_random_uuid()::text,
   user_id uuid not null references auth.users(id) on delete cascade,
-  account_id uuid not null references public.accounts(id),
+  account_id text not null references public.accounts(id),
   name text not null,
   limit_cents integer not null,
   closing_day integer not null check (closing_day between 1 and 31),
@@ -38,10 +38,10 @@ create table if not exists public.credit_cards (
 );
 
 create table if not exists public.transactions (
-  id uuid primary key default gen_random_uuid(),
+  id text primary key default gen_random_uuid()::text,
   user_id uuid not null references auth.users(id) on delete cascade,
-  account_id uuid not null references public.accounts(id),
-  credit_card_id uuid references public.credit_cards(id),
+  account_id text not null references public.accounts(id),
+  credit_card_id text references public.credit_cards(id),
   amount_cents integer not null,
   currency text not null default 'BRL',
   type text not null check (type in ('income', 'expense', 'transfer')),
@@ -63,9 +63,9 @@ create table if not exists public.transactions (
 );
 
 create table if not exists public.invoices (
-  id uuid primary key default gen_random_uuid(),
+  id text primary key default gen_random_uuid()::text,
   user_id uuid not null references auth.users(id) on delete cascade,
-  credit_card_id uuid not null references public.credit_cards(id),
+  credit_card_id text not null references public.credit_cards(id),
   reference_month integer not null check (reference_month between 1 and 12),
   reference_year integer not null,
   total_cents integer not null default 0,
@@ -83,7 +83,7 @@ create table if not exists public.invoices (
 );
 
 create table if not exists public.budgets (
-  id uuid primary key default gen_random_uuid(),
+  id text primary key default gen_random_uuid()::text,
   user_id uuid not null references auth.users(id) on delete cascade,
   category_id text not null,
   limit_cents integer not null,
@@ -102,7 +102,7 @@ create table if not exists public.budgets (
 );
 
 create table if not exists public.reminders (
-  id uuid primary key default gen_random_uuid(),
+  id text primary key default gen_random_uuid()::text,
   user_id uuid not null references auth.users(id) on delete cascade,
   title text not null,
   description text,
@@ -122,7 +122,7 @@ create table if not exists public.reminders (
 );
 
 create table if not exists public.goals (
-  id uuid primary key default gen_random_uuid(),
+  id text primary key default gen_random_uuid()::text,
   user_id uuid not null references auth.users(id) on delete cascade,
   name text not null,
   target_cents integer not null,
@@ -141,7 +141,7 @@ create table if not exists public.goals (
 );
 
 create table if not exists public.shared_access (
-  id uuid primary key default gen_random_uuid(),
+  id text primary key default gen_random_uuid()::text,
   owner_user_id uuid not null references auth.users(id) on delete cascade,
   shared_with_user_id uuid references auth.users(id) on delete cascade,
   shared_with_email text not null,
@@ -154,7 +154,7 @@ create table if not exists public.shared_access (
 );
 
 create table if not exists public.open_finance_connections (
-  id uuid primary key default gen_random_uuid(),
+  id text primary key default gen_random_uuid()::text,
   user_id uuid not null references auth.users(id) on delete cascade,
   institution_id text not null,
   institution_name text not null,
@@ -170,24 +170,25 @@ create table if not exists public.open_finance_connections (
 );
 
 create table if not exists public.sync_mutations (
-  id uuid primary key default gen_random_uuid(),
+  id text primary key,
   user_id uuid not null references auth.users(id) on delete cascade,
   entity_type text not null,
-  entity_id uuid not null,
+  entity_id text not null,
   operation text not null check (operation in ('insert', 'update', 'delete')),
   idempotency_key text not null unique,
   device_id text not null,
   payload jsonb,
   status text not null default 'accepted',
+  server_version bigint not null default 1,
   created_at timestamptz not null default now()
 );
 
 create table if not exists public.audit_log (
-  id uuid primary key default gen_random_uuid(),
+  id text primary key default gen_random_uuid()::text,
   user_id uuid references auth.users(id) on delete set null,
   actor_user_id uuid references auth.users(id) on delete set null,
   entity_type text not null,
-  entity_id uuid,
+  entity_id text,
   action text not null,
   metadata jsonb not null default '{}',
   created_at timestamptz not null default now()

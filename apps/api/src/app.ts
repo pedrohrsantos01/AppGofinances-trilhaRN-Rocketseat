@@ -5,8 +5,8 @@ import { z } from "zod";
 
 import { createSupabaseAuthVerifier, AuthVerifier } from "./auth";
 import { fail, ok } from "./http/envelope";
-import { InMemorySharingService } from "./services/inMemorySharingService";
-import { InMemorySyncService } from "./services/inMemorySyncService";
+import { SupabaseSharingService } from "./services/supabaseSharingService";
+import { SupabaseSyncService } from "./services/supabaseSyncService";
 import { AuthenticatedUser, SharingService, SyncService } from "./types";
 
 const syncMutationSchema = z.object({
@@ -74,7 +74,7 @@ async function authenticate(
     return false;
   }
 
-  request.user = user;
+  request.user = { ...user, accessToken: token };
   return true;
 }
 
@@ -88,8 +88,8 @@ function requireUser(request: FastifyRequest): AuthenticatedUser {
 export function buildApp(options: BuildAppOptions = {}): FastifyInstance {
   const app = Fastify({ logger: false });
   const authVerifier = options.authVerifier ?? createSupabaseAuthVerifier();
-  const syncService = options.syncService ?? new InMemorySyncService();
-  const sharingService = options.sharingService ?? new InMemorySharingService();
+  const syncService = options.syncService ?? new SupabaseSyncService();
+  const sharingService = options.sharingService ?? new SupabaseSharingService();
 
   void app.register(cors, { origin: true });
   void app.register(sensible);
@@ -98,7 +98,8 @@ export function buildApp(options: BuildAppOptions = {}): FastifyInstance {
 
   app.get("/v1/me", async (request, reply) => {
     if (!(await authenticate(request, reply, authVerifier))) return reply;
-    return ok(requireUser(request));
+    const user = requireUser(request);
+    return ok({ id: user.id, email: user.email });
   });
 
   app.post("/v1/sync/push", async (request, reply) => {

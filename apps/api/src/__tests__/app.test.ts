@@ -1,4 +1,5 @@
 import { buildApp } from "../app";
+import { InMemorySharingService } from "../services/inMemorySharingService";
 
 describe("api app", () => {
   it("returns a health envelope", async () => {
@@ -87,6 +88,7 @@ describe("api app", () => {
   it("creates, lists, and revokes sharing invites through the BFF", async () => {
     const app = buildApp({
       authVerifier: async () => ({ id: "owner-1", email: "owner@example.com" }),
+      sharingService: new InMemorySharingService(),
     });
 
     const createResponse = await app.inject({

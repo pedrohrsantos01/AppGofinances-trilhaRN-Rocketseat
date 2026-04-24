@@ -22,7 +22,7 @@ jobs:
         run: npm ci --legacy-peer-deps
 
       - name: Full test suite with coverage
-        run: npm run test:coverage -- --ci --verbose
+        run: npm run test:coverage:ci -- --verbose
 
       - name: API regression tests
         run: npm run test:api -- --ci --no-coverage
@@ -34,3 +34,33 @@ jobs:
           name: coverage-report
           path: coverage/
           retention-days: 14
+
+  detox-regression:
+    name: Detox Android Regression
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Build and run full Detox suite
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 33
+          target: google_apis
+          arch: x86_64
+          profile: pixel_4
+          avd-name: Pixel_4_API_33
+          script: npm run test:e2e:build && npm run test:e2e

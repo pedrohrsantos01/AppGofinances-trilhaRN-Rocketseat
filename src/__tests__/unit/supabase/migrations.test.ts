@@ -14,6 +14,9 @@ describe("Supabase production migration", () => {
     expect(sql).toContain("create table if not exists public.transactions");
     expect(sql).toContain("create table if not exists public.shared_access");
     expect(sql).toContain("create table if not exists public.sync_mutations");
+    expect(sql).toContain("id text primary key");
+    expect(sql).toContain("entity_id text not null");
+    expect(sql).toContain("server_version bigint not null default 1");
     expect(sql).toContain("alter table public.transactions enable row level security");
     expect(sql).toContain("auth.uid() = user_id");
     expect(sql).toContain("idx_transactions_user_updated");
