@@ -8,5 +8,9 @@
       "Bash(npx tsc:*)",
       "Bash(npx eslint:*)"
     ]
+  },
+  "enabledPlugins": {
+    "supabase@claude-plugins-official": true,
+    "expo@claude-plugins-official": true
   }
 }

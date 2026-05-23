@@ -55,3 +55,6 @@ web-build/
 dist/
 
 .env
+
+# Supabase CLI temp cache
+supabase/.temp/
