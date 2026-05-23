@@ -1,12 +1,15 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   applyRemoteChanges,
   pullFromBff,
   pushToBff,
+  queueItemToMutation,
   syncWithBff,
   SyncMutation,
 } from "../../../../features/sync/infra/BffSyncGateway";
 import { ApiClient } from "../../../../shared/infra/http/ApiClient";
 import { SyncQueueItem } from "../../../../features/sync/domain/syncQueue";
+import { DEVICE_ID_KEY, resetDeviceIdCache } from "../../../../features/sync/infra/deviceId";
 
 const mockGetFirstAsync = jest.fn();
 const mockRunAsync = jest.fn();
@@ -28,6 +31,28 @@ describe("BffSyncGateway", () => {
     mockGetFirstAsync.mockReset();
     mockRunAsync.mockReset();
     mockProcessPendingQueue.mockReset();
+  });
+
+  it("builds mutations with the persisted device id, not the local placeholder", async () => {
+    resetDeviceIdCache();
+    await AsyncStorage.clear();
+    await AsyncStorage.setItem(DEVICE_ID_KEY, "device-abc");
+
+    const item: SyncQueueItem = {
+      id: "m1",
+      entity_type: "transactions",
+      entity_id: "tx1",
+      operation: "insert",
+      payload: { id: "tx1" },
+      status: "pending",
+      retry_count: 0,
+      created_at: "2026-04-24T12:00:00.000Z",
+    };
+
+    const mutation = await queueItemToMutation(item);
+
+    expect(mutation.device_id).toBe("device-abc");
+    expect(mutation.idempotency_key).toBe("device-abc:m1");
   });
 
   it("pushes mutation batches to the BFF sync endpoint", async () => {

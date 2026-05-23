@@ -2,6 +2,7 @@ import { ApiClient } from "../../../shared/infra/http/ApiClient";
 import { getDatabase } from "../../../shared/infra/database/database";
 import { processPendingQueue } from "../application/syncService";
 import { mergeByVersion, SyncQueueItem, VersionedRecord } from "../domain/syncQueue";
+import { loadDeviceId } from "./deviceId";
 
 export type SyncEntityType =
   | "accounts"
@@ -52,12 +53,8 @@ const ENTITY_TABLES: Record<string, string> = {
   goals: "goals",
 };
 
-function getDeviceId(): string {
-  return "local-device";
-}
-
-export function queueItemToMutation(item: SyncQueueItem): SyncMutation {
-  const deviceId = getDeviceId();
+export async function queueItemToMutation(item: SyncQueueItem): Promise<SyncMutation> {
+  const deviceId = await loadDeviceId();
 
   return {
     id: item.id,
@@ -173,7 +170,7 @@ export async function syncWithBff(
   lastSyncAt?: string
 ): Promise<{ pushed: number; pulled: number; conflicts: number; failed: number }> {
   const pushResult = await processPendingQueue(async (item) => {
-    const result = await pushToBff(client, [queueItemToMutation(item)]);
+    const result = await pushToBff(client, [await queueItemToMutation(item)]);
     const accepted = result.accepted.some((acceptedItem) => acceptedItem.id === item.id);
     return { success: accepted && result.conflicts.length === 0 };
   });

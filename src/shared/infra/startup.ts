@@ -2,6 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getDatabase } from "./database/database";
 import { getDefaultAccountId, seedDefaultAccount } from "./database/seedDefaultAccount";
 import { TransactionRepository } from "../../features/transactions/infra/TransactionRepository";
+import { loadDeviceId } from "../../features/sync/infra/deviceId";
 import { Transaction } from "../domain/entities/Transaction";
 import { amountStringToCents } from "./storage/migrations/v1_to_v2";
 import { format, parseISO } from "date-fns";
@@ -73,6 +74,7 @@ async function migrateAsyncStorageToSQLite(userId: string): Promise<void> {
 
 export async function initializeApp(userId: string): Promise<void> {
   await getDatabase();
+  await loadDeviceId();
   await seedDefaultAccount(userId);
   await migrateAsyncStorageToSQLite(userId);
 }
