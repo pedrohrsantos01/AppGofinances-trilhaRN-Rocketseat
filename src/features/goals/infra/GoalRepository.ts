@@ -1,6 +1,6 @@
 import { getDatabase } from "../../../shared/infra/database/database";
 import { Goal, GoalStatus } from "../../../shared/domain/entities/Goal";
-import { enqueueChange } from "../../sync/application/syncService";
+import { safeEnqueueChange } from "../../sync/application/syncService";
 
 function toPayload(goal: Goal): Record<string, unknown> {
   return { ...goal };
@@ -62,7 +62,7 @@ export class GoalRepository {
         goal.user_id,
       ]
     );
-    enqueueChange("goals", goal.id, "insert", toPayload(goal)).catch(() => {});
+    await safeEnqueueChange("goals", goal.id, "insert", toPayload(goal));
     return goal;
   }
 
@@ -85,7 +85,7 @@ export class GoalRepository {
       ]
     );
     const updated = { ...goal, updated_at: now, version: goal.version + 1 };
-    enqueueChange("goals", goal.id, "update", toPayload(updated)).catch(() => {});
+    await safeEnqueueChange("goals", goal.id, "update", toPayload(updated));
     return updated;
   }
 
@@ -98,7 +98,7 @@ export class GoalRepository {
     );
     const goal = await this.getById(id);
     if (goal) {
-      enqueueChange("goals", id, "update", toPayload(goal)).catch(() => {});
+      await safeEnqueueChange("goals", id, "update", toPayload(goal));
     }
     return goal;
   }
@@ -128,6 +128,6 @@ export class GoalRepository {
   async delete(id: string): Promise<void> {
     const db = await getDatabase();
     await db.runAsync("DELETE FROM goals WHERE id = ?", [id]);
-    enqueueChange("goals", id, "delete", null).catch(() => {});
+    await safeEnqueueChange("goals", id, "delete", null);
   }
 }

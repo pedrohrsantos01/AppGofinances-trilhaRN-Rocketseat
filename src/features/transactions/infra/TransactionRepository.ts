@@ -1,6 +1,6 @@
 import { getDatabase } from "../../../shared/infra/database/database";
 import { Transaction } from "../../../shared/domain/entities/Transaction";
-import { enqueueChange } from "../../sync/application/syncService";
+import { safeEnqueueChange } from "../../sync/application/syncService";
 
 function toPayload(tx: Transaction): Record<string, unknown> {
   return { ...tx };
@@ -34,7 +34,7 @@ export class TransactionRepository {
         tx.user_id,
       ]
     );
-    enqueueChange("transactions", tx.id, "insert", toPayload(tx)).catch(() => {});
+    await safeEnqueueChange("transactions", tx.id, "insert", toPayload(tx));
     return tx;
   }
 
@@ -70,7 +70,7 @@ export class TransactionRepository {
       }
     });
     for (const tx of transactions) {
-      enqueueChange("transactions", tx.id, "insert", toPayload(tx)).catch(() => {});
+      await safeEnqueueChange("transactions", tx.id, "insert", toPayload(tx));
     }
   }
 
@@ -93,14 +93,14 @@ export class TransactionRepository {
       ]
     );
     const updated = { ...tx, updated_at: now, version: tx.version + 1 };
-    enqueueChange("transactions", tx.id, "update", toPayload(updated)).catch(() => {});
+    await safeEnqueueChange("transactions", tx.id, "update", toPayload(updated));
     return updated;
   }
 
   async delete(id: string): Promise<void> {
     const db = await getDatabase();
     await db.runAsync("DELETE FROM transactions WHERE id = ?", [id]);
-    enqueueChange("transactions", id, "delete", null).catch(() => {});
+    await safeEnqueueChange("transactions", id, "delete", null);
   }
 
   async getById(id: string): Promise<Transaction | null> {

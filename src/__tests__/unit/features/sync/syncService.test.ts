@@ -1,8 +1,14 @@
 import {
   enqueueChange,
+  safeEnqueueChange,
   getPendingCount,
   processPendingQueue,
 } from "../../../../features/sync/application/syncService";
+import {
+  setSyncErrorReporter,
+  resetSyncErrorReporter,
+} from "../../../../features/sync/application/syncErrorReporter";
+import { SyncQueueRepository } from "../../../../features/sync/infra/SyncQueueRepository";
 import { closeDatabase } from "../../../../shared/infra/database/database";
 
 beforeEach(async () => {
@@ -41,5 +47,38 @@ describe("syncService", () => {
     const result = await processPendingQueue(syncFn);
 
     expect(result).toEqual({ synced: expect.any(Number), failed: expect.any(Number) });
+  });
+
+  describe("safeEnqueueChange", () => {
+    afterEach(() => {
+      resetSyncErrorReporter();
+      jest.restoreAllMocks();
+    });
+
+    it("reports the failure instead of swallowing it when enqueue rejects", async () => {
+      const failure = new Error("disk full");
+      jest.spyOn(SyncQueueRepository.prototype, "enqueue").mockRejectedValueOnce(failure);
+      const reporter = jest.fn();
+      setSyncErrorReporter(reporter);
+
+      await expect(
+        safeEnqueueChange("transactions", "tx-9", "insert", { name: "D" })
+      ).resolves.toBeUndefined();
+
+      expect(reporter).toHaveBeenCalledWith(failure, {
+        entityType: "transactions",
+        entityId: "tx-9",
+        operation: "insert",
+      });
+    });
+
+    it("does not report when enqueue succeeds", async () => {
+      const reporter = jest.fn();
+      setSyncErrorReporter(reporter);
+
+      await safeEnqueueChange("transactions", "tx-10", "update", { name: "E" });
+
+      expect(reporter).not.toHaveBeenCalled();
+    });
   });
 });

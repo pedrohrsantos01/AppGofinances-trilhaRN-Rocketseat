@@ -1,6 +1,6 @@
 import { getDatabase } from "../../../shared/infra/database/database";
 import { Account } from "../../../shared/domain/entities/Account";
-import { enqueueChange } from "../../sync/application/syncService";
+import { safeEnqueueChange } from "../../sync/application/syncService";
 
 function toPayload(account: Account): Record<string, unknown> {
   return { ...account, is_active: account.is_active ? 1 : 0 };
@@ -27,7 +27,7 @@ export class AccountRepository {
         account.user_id,
       ]
     );
-    enqueueChange("accounts", account.id, "insert", toPayload(account)).catch(() => {});
+    await safeEnqueueChange("accounts", account.id, "insert", toPayload(account));
     return account;
   }
 
@@ -48,14 +48,14 @@ export class AccountRepository {
         account.id,
       ]
     );
-    enqueueChange("accounts", account.id, "update", toPayload(account)).catch(() => {});
+    await safeEnqueueChange("accounts", account.id, "update", toPayload(account));
     return account;
   }
 
   async delete(id: string): Promise<void> {
     const db = await getDatabase();
     await db.runAsync("DELETE FROM accounts WHERE id = ?", [id]);
-    enqueueChange("accounts", id, "delete", null).catch(() => {});
+    await safeEnqueueChange("accounts", id, "delete", null);
   }
 
   async getById(id: string): Promise<Account | null> {

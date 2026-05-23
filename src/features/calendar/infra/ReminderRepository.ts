@@ -1,5 +1,5 @@
 import { getDatabase } from "../../../shared/infra/database/database";
-import { enqueueChange } from "../../sync/application/syncService";
+import { safeEnqueueChange } from "../../sync/application/syncService";
 
 function toPayload(r: Reminder): Record<string, unknown> {
   return { ...r, is_completed: r.is_completed ? 1 : 0, recurrence: r.recurrence ?? null };
@@ -65,7 +65,7 @@ export class ReminderRepository {
         reminder.updated_at,
       ]
     );
-    enqueueChange("reminders", reminder.id, "insert", toPayload(reminder)).catch(() => {});
+    await safeEnqueueChange("reminders", reminder.id, "insert", toPayload(reminder));
     return reminder;
   }
 
@@ -85,7 +85,7 @@ export class ReminderRepository {
         reminder.id,
       ]
     );
-    enqueueChange("reminders", reminder.id, "update", toPayload(reminder)).catch(() => {});
+    await safeEnqueueChange("reminders", reminder.id, "update", toPayload(reminder));
     return reminder;
   }
 
@@ -118,6 +118,6 @@ export class ReminderRepository {
   async delete(id: string): Promise<void> {
     const db = await getDatabase();
     await db.runAsync("DELETE FROM reminders WHERE id = ?", [id]);
-    enqueueChange("reminders", id, "delete", null).catch(() => {});
+    await safeEnqueueChange("reminders", id, "delete", null);
   }
 }

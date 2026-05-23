@@ -1,6 +1,6 @@
 import { getDatabase } from "../../../shared/infra/database/database";
 import { Budget } from "../../../shared/domain/entities/Budget";
-import { enqueueChange } from "../../sync/application/syncService";
+import { safeEnqueueChange } from "../../sync/application/syncService";
 
 function toPayload(budget: Budget): Record<string, unknown> {
   return { ...budget, rollover: budget.rollover ? 1 : 0 };
@@ -32,7 +32,7 @@ export class BudgetRepository {
         budget.updated_at,
       ]
     );
-    enqueueChange("budgets", budget.id, "insert", toPayload(budget)).catch(() => {});
+    await safeEnqueueChange("budgets", budget.id, "insert", toPayload(budget));
     return budget;
   }
 
@@ -71,7 +71,7 @@ export class BudgetRepository {
   async delete(id: string): Promise<void> {
     const db = await getDatabase();
     await db.runAsync("DELETE FROM budgets WHERE id = ?", [id]);
-    enqueueChange("budgets", id, "delete", null).catch(() => {});
+    await safeEnqueueChange("budgets", id, "delete", null);
   }
 }
 
